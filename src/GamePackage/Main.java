@@ -1,4 +1,4 @@
-package Game;
+package GamePackage;
 
 public class Main {
     public static void main(String[] args) {
@@ -7,6 +7,7 @@ public class Main {
     }
 
     public void runMyProgram() {
-
+        Game game = new Game();
+        game.startGame();
     }
 }
