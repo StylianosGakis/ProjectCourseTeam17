@@ -1,4 +1,4 @@
-package Game;
+package GamePackage;
 
 /**
  * TODO maybe add some temporary strength given for a number of rounds after eating this food, maybe do that for

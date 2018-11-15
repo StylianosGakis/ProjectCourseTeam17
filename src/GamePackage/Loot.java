@@ -1,4 +1,4 @@
-package Game;
+package GamePackage;
 
 public class Loot extends Item{
     // Field variables

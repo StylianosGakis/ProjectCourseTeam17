@@ -4,7 +4,7 @@
  * Created Wednesday, 14/11/2018 at 01:21
  */
 
-package Game;
+package GamePackage;
 
 public enum DoorColor {
     GRAY// TODO add more colors if needed

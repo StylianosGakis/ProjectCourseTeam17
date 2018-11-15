@@ -4,7 +4,7 @@
  * Created Wednesday, 14/11/2018 at 00:34
  */
 
-package Game;
+package GamePackage;
 
 public class Key extends Item {
     // Field variables
