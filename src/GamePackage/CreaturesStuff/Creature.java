@@ -4,18 +4,20 @@
  * Created Tuesday, 13/11/2018 at 20:58
  */
 
-package GamePackage;
+package GamePackage.CreaturesStuff;
+
+import GamePackage.MapStuff.Room;
 
 public abstract class Creature {
     // Field variables
     private String name;
-    private int[][] roomCurrentlyInside;
+    private Room roomCurrentlyInside;
     private int maxHealth;
     private int currentHealth;
     private int damage;
 
     // Constructors
-    public Creature(String name, int[][] roomCurrentlyInside, int maxHealth, int damage) {
+    public Creature(String name, Room roomCurrentlyInside, int maxHealth, int damage) {
         this.name = name;
         this.roomCurrentlyInside = roomCurrentlyInside;
         this.maxHealth = maxHealth;
@@ -33,10 +35,10 @@ public abstract class Creature {
     public void setName(String name) {
         this.name = name;
     }
-    public int[][] getRoomCurrentlyInside() {
+    public Room getRoomCurrentlyInside() {
         return roomCurrentlyInside;
     }
-    public void setRoomCurrentlyInside(int[][] roomCurrentlyInside) {
+    public void setRoomCurrentlyInside(Room roomCurrentlyInside) {
         this.roomCurrentlyInside = roomCurrentlyInside;
     }
     public int getMaxHealth() {
@@ -44,6 +46,12 @@ public abstract class Creature {
     }
     public void setMaxHealth(int maxHealth) {
         this.maxHealth = maxHealth;
+    }
+    public int getCurrentHealth() {
+        return currentHealth;
+    }
+    public void setCurrentHealth(int currentHealth) {
+        this.currentHealth = currentHealth;
     }
     public int getDamage() {
         return damage;

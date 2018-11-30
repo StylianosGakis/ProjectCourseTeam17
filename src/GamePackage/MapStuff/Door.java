@@ -1,4 +1,4 @@
-package GamePackage;
+package GamePackage.MapStuff;
 
 /**
  * verticalDoor[0][0] will be 🡻 for room[0][0] and 🡹 for room [1][0]

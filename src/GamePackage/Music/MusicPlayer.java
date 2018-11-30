@@ -4,7 +4,7 @@
  * Created Wednesday, 14/11/2018 at 21:43
  */
 
-package GamePackage;
+package GamePackage.Music;
 
 import javax.sound.sampled.*;
 import java.io.File;

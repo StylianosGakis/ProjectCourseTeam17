@@ -1,4 +1,7 @@
-package GamePackage;
+package GamePackage.CreaturesStuff;
+
+import GamePackage.ItemsStuff.Loot;
+import GamePackage.MapStuff.Room;
 
 import java.util.ArrayList;
 
@@ -7,7 +10,7 @@ public class Monster extends Creature {
     ArrayList<Loot> lootArray = new ArrayList<Loot>();
 
     // Constructors
-    public Monster(String name, int[][] roomCurrentlyInside, int maxHealth, int damage) {
+    public Monster(String name, Room roomCurrentlyInside, int maxHealth, int damage) {
         super(name, roomCurrentlyInside, maxHealth, damage);
     }
 

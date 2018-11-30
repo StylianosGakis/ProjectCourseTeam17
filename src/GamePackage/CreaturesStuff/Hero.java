@@ -4,7 +4,10 @@
  * Created Tuesday, 13/11/2018 at 22:14
  */
 
-package GamePackage;
+package GamePackage.CreaturesStuff;
+
+import GamePackage.Game;
+import GamePackage.MapStuff.Room;
 
 public class Hero extends Creature {
     // Field variables
@@ -13,7 +16,7 @@ public class Hero extends Creature {
     // TODO add backpack
 
     // Constructors
-    public Hero(String name, int[][] roomCurrentlyInside, int maxHealth, int damage, HeroClass heroClass) {
+    public Hero(String name, Room roomCurrentlyInside, int maxHealth, int damage, HeroClass heroClass) {
         super(name, roomCurrentlyInside, maxHealth, damage);
         this.heroClass = heroClass;
     }
