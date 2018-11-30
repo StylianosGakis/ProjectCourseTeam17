@@ -1,4 +1,4 @@
-package GamePackage;
+package GamePackage.Etc;
 
 /**
  * This class is meant to be filled with comments of "TO DO" comments for future development, no functionality,

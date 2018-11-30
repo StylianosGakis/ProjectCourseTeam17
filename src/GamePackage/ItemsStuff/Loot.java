@@ -1,4 +1,4 @@
-package GamePackage;
+package GamePackage.ItemsStuff;
 
 public class Loot extends Item{
     // Field variables

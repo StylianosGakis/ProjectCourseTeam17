@@ -4,7 +4,7 @@
  * Created Wednesday, 14/11/2018 at 00:30
  */
 
-package GamePackage;
+package GamePackage.CreaturesStuff;
 
 public enum HeroClass {
     WARRIOR, MAGE, ROGUE

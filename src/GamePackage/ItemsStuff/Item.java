@@ -4,7 +4,7 @@
  * Created Wednesday, 14/11/2018 at 00:33
  */
 
-package GamePackage;
+package GamePackage.ItemsStuff;
 
 public abstract class Item {
     // Field variables
