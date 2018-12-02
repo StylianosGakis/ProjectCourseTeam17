@@ -26,6 +26,7 @@ public class Game {
     private Hero hero;
 
     // Setup stuff
+
     /**
      * Method called from main method that manages the order that stuff has to be done to start the game
      * Package protected (that's why it's missing public)
@@ -91,6 +92,7 @@ public class Game {
      */
     private void runGame() {
         while (true) {
+            exitGame();
             testingMovement();
             System.exit(10);
         }
@@ -100,12 +102,12 @@ public class Game {
         boolean exit = false;
         while (!exit) {
             try {
-                map.printMap(hero.getRoomCurrentlyInside().getxIndex(),hero.getRoomCurrentlyInside().getyIndex());
+                map.printMap(hero.getRoomCurrentlyInside().getxIndex(), hero.getRoomCurrentlyInside().getyIndex());
                 System.out.println(
                         Shortcuts.mapLeft + ". LEFT\n" +
-                        Shortcuts.mapUp + ". UP\n" +
-                        Shortcuts.mapRight + ". RIGHT\n" +
-                        Shortcuts.mapDown + ". DOWN"
+                                Shortcuts.mapUp + ". UP\n" +
+                                Shortcuts.mapRight + ". RIGHT\n" +
+                                Shortcuts.mapDown + ". DOWN"
                 );
                 int direction = in.nextInt();
                 // TODO print a different message here if the input does not match any of the shortcuts
@@ -116,4 +118,59 @@ public class Game {
             }
         }
     }
+
+    private int printMainMenu() {
+        Scanner input = new Scanner(System.in);
+
+        System.out.println("Game background"); //soon to be written
+        System.out.println("1. Start game\n" +
+                "2. Quit game\n");
+        System.out.println("Enter your choice");
+        System.out.print(">>");
+        int userInput = input.nextInt();
+        return userInput;
+    }
+
+    private int printGameMenu() {
+        Scanner input = new Scanner(System.in);
+
+        System.out.println();
+        System.out.println("MENU");
+        System.out.println(
+                "1. Move\n" +
+                        "2. Pick up item\n" +
+                        "3. Drop item\n" +
+                        "4. Fight\n" + //shows when there is a monster in the room
+                        "5. Flee\n" + //shows when there is a monster in the room
+                        "6. Game options\n");//opens sub menu
+        System.out.println("Enter your choice");
+        System.out.print(">>");
+        int menuChoice = input.nextInt();
+        if (menuChoice == 6) {
+            //sub menu
+            System.out.println("1. Show game instructions\n" +
+                    "2. Load game\n" +
+                    "3. Save game\n" +
+                    "4. Show keyboard commands\n" +
+                    "5. Change keyboard commands\n" +
+                    "6. Quit game\n");
+            System.out.println("Enter your choice");
+            System.out.print(">>");
+            int subMenuChoice = input.nextInt();
+            return subMenuChoice + 10;
+        }
+        return menuChoice;
+    }
+
+    private void exitGame() {
+        int mainMenuChoice = printMainMenu();
+        if (mainMenuChoice == 2) {
+            System.exit(0);
+        }else{
+            printGameMenu();
+        }
+
+    }
 }
+
+
