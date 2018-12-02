@@ -10,7 +10,7 @@ import GamePackage.CreaturesStuff.Hero;
 import GamePackage.CreaturesStuff.HeroClass;
 import GamePackage.MapStuff.Map;
 import GamePackage.Music.MusicPlayer;
-import Shortcuts.Shortcuts;
+import GamePackage.Shortcuts.Shortcuts;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;

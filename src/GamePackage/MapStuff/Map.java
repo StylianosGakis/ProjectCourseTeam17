@@ -6,9 +6,9 @@
 
 package GamePackage.MapStuff;
 
-import Art.Art;
+import ArtPackage.Art;
 import GamePackage.CreaturesStuff.Creature;
-import Shortcuts.Shortcuts;
+import GamePackage.Shortcuts.Shortcuts;
 
 public class Map {
     private int mapSize;
