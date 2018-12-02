@@ -169,7 +169,6 @@ public class Game {
         }else{
             printGameMenu();
         }
-
     }
 }
 
