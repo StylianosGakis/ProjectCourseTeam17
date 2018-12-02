@@ -4,7 +4,7 @@
  * Created Friday, 30/11/2018 at 01:00
  */
 
-package Shortcuts;
+package GamePackage.Shortcuts;
 
 /**
  * Why final?

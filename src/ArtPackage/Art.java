@@ -4,7 +4,7 @@
  * Created Friday, 30/11/2018 at 00:49
  */
 
-package Art;
+package ArtPackage;
 
 /**
  * Why final?
