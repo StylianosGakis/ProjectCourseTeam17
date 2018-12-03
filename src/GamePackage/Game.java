@@ -64,9 +64,27 @@ public class Game {
     private void createHero() {
         // We start our hero on TOP LEFT position.
         int initialStartingPosition = 0;
-        hero = new Hero("Hero name",
+        System.out.println("Are you boy or a girl? b/g");
+        boolean genderBoy;
+        if (in = "b"){
+            genderBoy = true;
+        } else {
+            genderBoy = false;
+        }
+        System.out.println("What is your name?");
+        String name = in.next;
+        System.out.println("Which class are you?");
+        System.out.println("1. Warrior");
+        System.out.println("2. Mage");
+        System.out.println("3. Rogue");
+        int heroClassChoice = in.nextInt;
+        hero = new Hero(name,
                 map.getRoom(initialStartingPosition, initialStartingPosition),
                 10, 10, HeroClass.WARRIOR);
+        if (heroClassChoice = 2)
+            hero.setHeroClass = MAGE;
+        if (heroClassChoice = 3)
+            hero.setHeroClass = ROGUE;
         hero.getRoomCurrentlyInside().setExplored(true);
     }
 
