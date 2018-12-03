@@ -6,8 +6,8 @@
 
 package GamePackage.MapStuff;
 
-import ArtPackage.Art;
 import GamePackage.CreaturesStuff.Creature;
+import GamePackage.Game;
 import GamePackage.Shortcuts.Shortcuts;
 
 public class Map {
@@ -54,24 +54,32 @@ public class Map {
         }
     }
 
-    public void moveCreature(Creature creature, int direction) {
+    /**
+     * @param creature which Creature is to be moved
+     * @param direction which direction it should be moved (from Shortcuts mapUp,mapDown,mapLeft,mapRight)
+     * @return returns true if movement was successful, false if it failed
+     */
+    public boolean moveCreature(Creature creature, int direction) {
         Door door = getDoor(getCurrentRoom(creature), direction);
         if (door == null) {
             System.out.println("There is no door in that direction!");
+            return false;
         } else if (door.isLocked()) { // TODO add unlocking option if we do have the key
             System.out.println("That door is locked, you will need the " + door.getDoorColor() + " key to unlock!");
+            return false;
         } else { // Door exists, and is unlocked. Move there.
             Room currentRoom = creature.getRoomCurrentlyInside();
-            if (direction == Shortcuts.mapLeft){
+            if (direction == Shortcuts.mapLeft) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex() - 1, currentRoom.getyIndex()));
-            } else if (direction == Shortcuts.mapUp){
+            } else if (direction == Shortcuts.mapUp) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex(), currentRoom.getyIndex() - 1));
-            } else if (direction == Shortcuts.mapRight){
+            } else if (direction == Shortcuts.mapRight) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex() + 1, currentRoom.getyIndex()));
-            } else if (direction == Shortcuts.mapDown){
+            } else if (direction == Shortcuts.mapDown) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex(), currentRoom.getyIndex() + 1));
             }
             creature.getRoomCurrentlyInside().setExplored(true);
+            return true;
         }
     }
 
@@ -86,7 +94,7 @@ public class Map {
      * horizontalDoorArray = new Door[mapSize - 1][mapSize];
      * therefore we can get out of bounds when looking for some doors
      *
-     * @param room The room that we are searching in reference to.
+     * @param room      The room that we are searching in reference to.
      * @param direction To which direction of the referenced room we are searching at.
      * @return returns the door if it exists, otherwise null.
      */
@@ -98,13 +106,13 @@ public class Map {
         // If we want 🡺 door of a room[x][y], we do horizontalDoorArray[x][y]
         try {
             Door door = null;
-            if (direction == Shortcuts.mapLeft){
+            if (direction == Shortcuts.mapLeft) {
                 door = horizontalDoorArray[room.getxIndex() - 1][room.getyIndex()];
-            } else if (direction == Shortcuts.mapUp){
+            } else if (direction == Shortcuts.mapUp) {
                 door = verticalDoorArray[room.getxIndex()][room.getyIndex() - 1];
-            } else if (direction == Shortcuts.mapRight){
+            } else if (direction == Shortcuts.mapRight) {
                 door = horizontalDoorArray[room.getxIndex()][room.getyIndex()];
-            } else if (direction == Shortcuts.mapDown){
+            } else if (direction == Shortcuts.mapDown) {
                 door = verticalDoorArray[room.getxIndex()][room.getyIndex()];
             }
             return door;
@@ -118,13 +126,16 @@ public class Map {
     /**
      * TODO Print the world as ASCII art
      */
-    public void printMap(int heroX, int heroY) {
-        Art.printMap();
-        System.out.print("(? = unexplored, * = explored, H = hero)\n");
+    public void printMap() {
+        int heroY = Game.hero.getRoomCurrentlyInside().getyIndex();
+        int heroX = Game.hero.getRoomCurrentlyInside().getxIndex();
+        System.out.print("(? = unexplored, I = Item, * = explored, H = hero)\n");
         for (int y = 0; y < mapSize; y++) {
             for (int x = 0; x < mapSize; x++) {
                 if (y == heroY && x == heroX) {
                     System.out.print("H ");
+                } else if (!getRoom(x, y).getItemsList().isEmpty()) {
+                    System.out.print("I "); // ITEM SHOW just for now.
                 } else if (getRoom(x, y).isExplored()) {
                     System.out.print("* ");
                 } else {
