@@ -24,4 +24,9 @@ public class Loot extends Item{
     public void setWorthInCoins(int worthInCoins) {
         this.worthInCoins = worthInCoins;
     }
+    @Override
+    public String toString() {
+        return super.toString() +
+                "WorthInCoins = " + worthInCoins;
+    }
 }
