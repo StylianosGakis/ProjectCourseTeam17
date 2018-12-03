@@ -24,6 +24,7 @@ public class Game {
     private Scanner in = new Scanner(System.in);
     private Map map;
     private Hero hero;
+    private int turnCounter = 0;
 
     // Setup stuff
 
@@ -110,6 +111,7 @@ public class Game {
                                 Shortcuts.mapDown + ". DOWN"
                 );
                 int direction = in.nextInt();
+                turnCounter++;
                 // TODO print a different message here if the input does not match any of the shortcuts
                 map.moveCreature(hero, direction);
             } catch (InputMismatchException e) {
@@ -158,6 +160,11 @@ public class Game {
             System.out.print(">>");
             int subMenuChoice = input.nextInt();
             return subMenuChoice + 10;
+        }else{
+            turnCounter++;
+            switch (menuChoice){
+
+            }
         }
         return menuChoice;
     }
