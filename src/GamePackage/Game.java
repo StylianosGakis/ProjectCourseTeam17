@@ -6,11 +6,13 @@
 
 package GamePackage;
 
+import ArtPackage.Art;
 import GamePackage.CreaturesStuff.Hero;
 import GamePackage.CreaturesStuff.HeroClass;
 import GamePackage.ItemsStuff.Item;
 import GamePackage.ItemsStuff.Loot;
 import GamePackage.MapStuff.Map;
+import GamePackage.MapStuff.Room;
 import GamePackage.MenusPackage.Menu;
 import GamePackage.Music.MusicPlayer;
 import GamePackage.Shortcuts.Shortcuts;
@@ -19,22 +21,19 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.regex.Pattern;
 
 public class Game {
     /*
     TODO - create a method that will receive some parameters, and return back a number but will loop forever until an
     integer is inserted
     */
-    /**
-     * @param debug could be used to print some values for debugging purposes, false if no extra printing has to happen.
-     */
+    // debug could be used to print some values for debugging purposes, false if no extra printing has to happen.
     public static boolean debug = false;
 
     // Field variables
     private Scanner in = new Scanner(System.in);
     private Map map;
-    private Hero hero;
+    public static Hero hero;
 
     private SecureRandom rand = new SecureRandom();
     private int turnCounter = 1;
@@ -90,7 +89,7 @@ public class Game {
         }
         in.nextLine();
         System.out.print("What is your name?\n>> ");
-        String name = in.next();
+        String name = in.nextLine();
         System.out.println("Which class are you?");
         System.out.println("1. Warrior");
         System.out.println("2. Mage");
@@ -105,7 +104,7 @@ public class Game {
         } else if (heroClassChoice == 3) {
             heroClass = HeroClass.ROGUE;
         }
-        this.hero = new Hero(name,
+        hero = new Hero(name,
                 map.getRoom(initialStartingPosition,
                         initialStartingPosition), 10, 10, heroClass, genderChoice);
         hero.getRoomCurrentlyInside().setExplored(true);
@@ -117,18 +116,19 @@ public class Game {
     private void placeMonsters() {
         // TODO add new monsters, initially fixed positions and fixed monsters.
     }
-    private void placeItems(){
+    private void placeItems() {
         //Loot
         ArrayList<String> LootName = new ArrayList<>();
-        LootName.add("WorriorFoot");
-        LootName.add("ChickenNuget");
+        LootName.add("WarriorFoot");
+        LootName.add("ChickenNugget");
         LootName.add("WitchHart");
-        LootName.add("Monsterteeth");
+        LootName.add("MonsterTeeth");
 
         ArrayList<Item> itemsList = map.getRoom(0, 0).getItemsList();
-        itemsList.add(new Loot(LootName.get(rand.nextInt(LootName.size()) ) , rand.nextInt(100) + 50));
-        int size = map.getMapSize();
-        System.out.println(map.getRoom(0, 0).getItemsList().get(0));
+        // one of the 4 values above, value 50-149 randomly.
+        itemsList.add(new Loot(LootName.get(rand.nextInt(LootName.size())), rand.nextInt(100) + 50));
+        // int size = map.getMapSize();
+        // System.out.println(map.getRoom(rand.nextInt(size), rand.nextInt(size)).getItemsList().get(0));
 
 
     }
@@ -169,11 +169,14 @@ public class Game {
         boolean inSubMenu = false;
 
         if (menuChoice == 1) {
-            boolean usedTurn = handleMovement();
-            if (usedTurn) {
+            boolean successfulMove = handleMovement();
+            if (successfulMove) {
+                System.out.println("New map status:\n");
+                map.printMap();
                 return false; // end the turn if the move was made
             }
         } else if (menuChoice == 2) {
+            showItemsInRoom();
             // pickup item
         } else if (menuChoice == 3) {
             // drop item
@@ -221,7 +224,8 @@ public class Game {
         boolean inLoop = true;
         while (inLoop) {
             try {
-                map.printMap(hero.getRoomCurrentlyInside().getxIndex(), hero.getRoomCurrentlyInside().getyIndex());
+                Art.printMap();
+                map.printMap();
                 System.out.print(Shortcuts.cancelAction + ". Cancel move\n" +
                         Shortcuts.mapLeft + ". Left\n" +
                         Shortcuts.mapUp + ". Up\n" +
@@ -252,6 +256,26 @@ public class Game {
         return false;
     }
 
+    private void showItemsInRoom() {
+        Room currentRoom = hero.getRoomCurrentlyInside();
+        if (currentRoom.getItemsList().isEmpty()) {
+            System.out.println("There are no items in this room!");
+        } else {
+            System.out.print("This is the list of items in this room:\n");
+            for (Item element : currentRoom.getItemsList()) {
+                System.out.println(element);
+            }
+            System.out.println("Would you like to pick one up?");
+            // TODO add non-troll picking-up method that shows all items and user can choose what to pick up.
+            System.out.println("Well even if you wanted to, you can't yet.");
+            System.out.print("Press F to continue\n>> ");
+            String keyPressed = in.nextLine();
+            while (!keyPressed.equalsIgnoreCase("F")) {
+                System.out.print("That's not F!\n>> ");
+                keyPressed = in.nextLine();
+            }
+        }
+    }
 
     private void exitGame() {
         System.out.println("Are you sure? (Y)es/(N)o");

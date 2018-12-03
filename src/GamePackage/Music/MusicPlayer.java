@@ -60,7 +60,7 @@ public class MusicPlayer implements Runnable {
             uafe.printStackTrace();
         } catch (LineUnavailableException lue) {
             lue.printStackTrace();
-        } catch (InterruptedException ie){
+        } catch (InterruptedException ie) {
             ie.printStackTrace();
         } finally {
             if (clip != null) { // If it did in fact get initialized.

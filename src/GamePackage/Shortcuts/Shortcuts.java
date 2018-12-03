@@ -8,11 +8,11 @@ package GamePackage.Shortcuts;
 
 /**
  * Why final?
- *
+ * <p>
  * A final class cannot be extended by any other class
  * A final variable cannot be reassigned another value
  * A final method cannot be overridden
- *
+ * <p>
  * We don't want to create objects of it nor do we want any other class to inherit it etc. We are going to use this
  * class just to save all of our shortcuts //TODO enable the user to modify these shortcuts
  */

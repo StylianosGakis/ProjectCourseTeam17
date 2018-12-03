@@ -5,38 +5,38 @@ package GamePackage.MapStuff;
  * verticalDoor[0][1] will be 🡻 for room[0][1] and 🡹 for room [1][1]
  * verticalDoor[0][2] will be 🡻 for room[0][2] and 🡹 for room [1][2]
  * verticalDoor[0][3] will be 🡻 for room[0][3] and 🡹 for room [1][3]
- * 
+ * <p>
  * verticalDoor[1][0] will be 🡻 for room[1][0] and 🡹 for room [2][0]
  * verticalDoor[1][1] will be 🡻 for room[1][1] and 🡹 for room [2][1]
  * verticalDoor[1][2] will be 🡻 for room[1][2] and 🡹 for room [2][2]
  * verticalDoor[1][3] will be 🡻 for room[1][3] and 🡹 for room [2][3]
- * 
+ * <p>
  * verticalDoor[2][0] will be 🡻 for room[2][0] and 🡹 for room [3][0]
  * verticalDoor[2][1] will be 🡻 for room[2][1] and 🡹 for room [3][1]
  * verticalDoor[2][2] will be 🡻 for room[2][2] and 🡹 for room [3][2]
  * verticalDoor[2][3] will be 🡻 for room[2][3] and 🡹 for room [3][3]
- * 
+ * <p>
  * Therefore we can see.
  * If we want 🡹 door of a room[x][y], we do verticalDoor[x+1][y]
  * If we want 🡻 door of a room[x][y], we do verticalDoor[x][y]
- * 
- * 
+ * <p>
+ * <p>
  * horizontalDoor[0][0] will be 🡺 for room[0][0] and 🡸 for room [0][1]
  * horizontalDoor[0][1] will be 🡺 for room[0][1] and 🡸 for room [0][2]
  * horizontalDoor[0][2] will be 🡺 for room[0][2] and 🡸 for room [0][3]
- * 
+ * <p>
  * horizontalDoor[1][0] will be 🡺 for room[1][0] and 🡸 for room [1][1]
  * horizontalDoor[1][1] will be 🡺 for room[1][1] and 🡸 for room [1][2]
  * horizontalDoor[1][2] will be 🡺 for room[1][2] and 🡸 for room [1][3]
- * 
+ * <p>
  * horizontalDoor[2][0] will be 🡺 for room[2][0] and 🡸 for room [2][1]
  * horizontalDoor[2][1] will be 🡺 for room[2][1] and 🡸 for room [2][2]
  * horizontalDoor[2][2] will be 🡺 for room[2][2] and 🡸 for room [2][3]
- * 
+ * <p>
  * horizontalDoor[3][0] will be 🡺 for room[3][0] and 🡸 for room [3][1]
  * horizontalDoor[3][1] will be 🡺 for room[3][1] and 🡸 for room [3][2]
  * horizontalDoor[3][2] will be 🡺 for room[3][2] and 🡸 for room [3][3]
- * 
+ * <p>
  * Therefore we can see.
  * If we want 🡺 door of a room[x][y], we do verticalDoor[x][y]
  * If we want 🡸 door of a room[x][y], we do verticalDoor[x][y-1]

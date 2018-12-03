@@ -5,7 +5,7 @@ import java.util.Scanner;
 public final class Menu {
     private static final Scanner in = new Scanner(System.in);
 
-    public static int mainMenu(){
+    public static int mainMenu() {
         System.out.println();
         System.out.println("MENU");
         System.out.println("1. Move\n" +
@@ -21,7 +21,7 @@ public final class Menu {
         return returnValue;
     }
 
-    public static int subMenu(){
+    public static int subMenu() {
         System.out.println("1. Show game instructions\n" +
                 "2. Load game\n" +
                 "3. Save game\n" +
