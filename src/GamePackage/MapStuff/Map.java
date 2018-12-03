@@ -54,12 +54,19 @@ public class Map {
         }
     }
 
-    public void moveCreature(Creature creature, int direction) {
+    /**
+     * @param creature
+     * @param direction
+     * @return returns true if movement was successful, false if it failed
+     */
+    public boolean moveCreature(Creature creature, int direction) {
         Door door = getDoor(getCurrentRoom(creature), direction);
         if (door == null) {
             System.out.println("There is no door in that direction!");
+            return false;
         } else if (door.isLocked()) { // TODO add unlocking option if we do have the key
             System.out.println("That door is locked, you will need the " + door.getDoorColor() + " key to unlock!");
+            return false;
         } else { // Door exists, and is unlocked. Move there.
             Room currentRoom = creature.getRoomCurrentlyInside();
             if (direction == Shortcuts.mapLeft){
@@ -72,6 +79,7 @@ public class Map {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex(), currentRoom.getyIndex() + 1));
             }
             creature.getRoomCurrentlyInside().setExplored(true);
+            return true;
         }
     }
 

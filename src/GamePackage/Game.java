@@ -9,17 +9,24 @@ package GamePackage;
 import GamePackage.CreaturesStuff.Hero;
 import GamePackage.CreaturesStuff.HeroClass;
 import GamePackage.MapStuff.Map;
+import GamePackage.MenusPackage.Menu;
 import GamePackage.Music.MusicPlayer;
 import GamePackage.Shortcuts.Shortcuts;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
-public class Game<in> {
+public class Game {
+    /*
+    TODO - create a method that will receive some parameters, and return back a number but will loop forever until an
+    integer is inserted
+    */
     /**
      * @param debug could be used to print some values for debugging purposes, false if no extra printing has to happen.
      */
     public static boolean debug = false;
+
     // Field variables
     private Scanner in = new Scanner(System.in);
     private Map map;
@@ -53,6 +60,7 @@ public class Game<in> {
         while (!exit) {
             try {
                 mapSizeChoice = in.nextInt();
+                in.nextLine();
                 exit = true;
             } catch (InputMismatchException e) {
                 System.out.println("Please enter a number");
@@ -65,28 +73,33 @@ public class Game<in> {
     private void createHero() {
         // We start our hero on TOP LEFT position.
         int initialStartingPosition = 0;
-        System.out.println("Are you boy or a girl? 1/2");
-
-        boolean genderBoy;
-        if (in.nextInt() == 1){
-            genderBoy = true;
+        System.out.print("Are you boy or a girl?\n1. Boy\n2. Girl\n>> ");
+        boolean genderChoice;
+        if (in.nextInt() == 1) {
+            genderChoice = true;
         } else {
-            genderBoy = false;
+            genderChoice = false;
         }
-        System.out.println("What is your name?");
+        in.nextLine();
+        System.out.print("What is your name?\n>> ");
         String name = in.next();
         System.out.println("Which class are you?");
         System.out.println("1. Warrior");
         System.out.println("2. Mage");
         System.out.println("3. Rogue");
         int heroClassChoice = in.nextInt();
-        hero = new Hero(name,
-                map.getRoom(initialStartingPosition, initialStartingPosition),
-                10, 10, HeroClass.WARRIOR);
-        if (heroClassChoice == 2)
-            hero.setHeroClass(HeroClass.MAGE);
-        if (heroClassChoice == 3)
-            hero.setHeroClass(HeroClass.ROGUE);
+        in.nextLine();
+        HeroClass heroClass = null;
+        if (heroClassChoice == 1) {
+            heroClass = HeroClass.WARRIOR;
+        } else if (heroClassChoice == 2) {
+            heroClass = HeroClass.MAGE;
+        } else if (heroClassChoice == 3) {
+            heroClass = HeroClass.ROGUE;
+        }
+        this.hero = new Hero(name,
+                map.getRoom(initialStartingPosition,
+                        initialStartingPosition), 10, 10, heroClass, genderChoice);
         hero.getRoomCurrentlyInside().setExplored(true);
     }
 
@@ -112,88 +125,117 @@ public class Game<in> {
      */
     private void runGame() {
         while (true) {
-            exitGame();
-            testingMovement();
-            System.exit(10);
+            playMusic("MusicFiles/smb_world_clear.wav");
+            System.out.println("Start of turn: " + turnCounter);
+            boolean inMenu = true;
+            while (inMenu) {
+                int menuChoice = Menu.mainMenu();
+                inMenu = handleMenuChoice(menuChoice);
+            }
+            //TODO rest of turn. Here monsters move etc. then the loop goes back and we are on next turn
+
+            turnCounter++; // increase turn number at the end of loop before we go to the next turn
         }
     }
 
-    private void testingMovement() {
-        boolean exit = false;
-        while (!exit) {
+    /**
+     * @param menuChoice the choice the user made
+     * @return returning true continues the printing, false exits the submenu
+     */
+    private boolean handleMenuChoice(int menuChoice) {
+        boolean inSubMenu = false;
+
+        if (menuChoice == 1) {
+            boolean usedTurn = handleMovement();
+            if (usedTurn) {
+                return false; // end the turn if the move was made
+            }
+        } else if (menuChoice == 2) {
+            // pickup item
+        } else if (menuChoice == 3) {
+            // drop item
+        } else if (menuChoice == 4) {
+            // fight
+        } else if (menuChoice == 5) {
+            // flee
+        } else if (menuChoice == 6) {
+            inSubMenu = true; // enter the sub menu loop
+        }
+        while (inSubMenu) {
+            int subChoice = Menu.subMenu();
+            inSubMenu = handleSubMenu(subChoice);
+        }
+        return true;
+    }
+
+    /**
+     * @param subChoice the choice the user made
+     * @return returning true continues the printing, false exits the submenu
+     */
+    private boolean handleSubMenu(int subChoice) {
+        if (subChoice == 1) {
+            // show game instructions
+        } else if (subChoice == 2) {
+            // load game
+        } else if (subChoice == 3) {
+            // save game
+        } else if (subChoice == 4) {
+            // show keyboard commands
+        } else if (subChoice == 5) {
+            // change keyboard commands
+        } else if (subChoice == 6) {
+            exitGame();
+        } else if (subChoice == 7) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return returns whether the movement was done successfully.
+     */
+    private boolean handleMovement() {
+        boolean inLoop = true;
+        while (inLoop) {
             try {
                 map.printMap(hero.getRoomCurrentlyInside().getxIndex(), hero.getRoomCurrentlyInside().getyIndex());
-                System.out.println(
-                        Shortcuts.mapLeft + ". LEFT\n" +
-                                Shortcuts.mapUp + ". UP\n" +
-                                Shortcuts.mapRight + ". RIGHT\n" +
-                                Shortcuts.mapDown + ". DOWN"
-                );
+                System.out.print(Shortcuts.cancelAction + ". Cancel move\n" +
+                        Shortcuts.mapLeft + ". Left\n" +
+                        Shortcuts.mapUp + ". Up\n" +
+                        Shortcuts.mapRight + ". Right\n" +
+                        Shortcuts.mapDown + ". Down\n" +
+                        ">> ");
                 int direction = in.nextInt();
-                turnCounter++;
-                // TODO print a different message here if the input does not match any of the shortcuts
-                map.moveCreature(hero, direction);
+                in.nextLine();
+                if (direction == Shortcuts.cancelAction) {
+                    System.out.println("Alright chief, cancel that");
+                    return false; // didn't use a turn.
+                } else if (direction != (Shortcuts.mapDown)
+                        && direction != (Shortcuts.mapUp)
+                        && direction != (Shortcuts.mapRight)
+                        && direction != (Shortcuts.mapLeft)) {
+                    System.out.println("Your hand must have slipped, maybe you should change your key-bindings!");
+                } else {
+                    map.moveCreature(hero, direction);
+                    inLoop = false; // if we move properly exit
+                    return true;
+                }
+                // TODO else, enable the change of key-bindings from this menu as well
             } catch (InputMismatchException e) {
                 System.out.println("Enter a number instead.");
                 in.nextLine(); // To catch the hanging "Enter" from the user
             }
         }
-    }
-
-    private int printMainMenu() {
-        Scanner input = new Scanner(System.in);
-
-        System.out.println("Game background"); //soon to be written
-        System.out.println("1. Start game\n" +
-                "2. Quit game\n");
-        System.out.println("Enter your choice");
-        System.out.print(">>");
-        int userInput = input.nextInt();
-        return userInput;
-    }
-
-    private int printGameMenu() {
-        Scanner input = new Scanner(System.in);
-
-        System.out.println();
-        System.out.println("MENU");
-        System.out.println(
-                "1. Move\n" +
-                        "2. Pick up item\n" +
-                        "3. Drop item\n" +
-                        "4. Fight\n" + //shows when there is a monster in the room
-                        "5. Flee\n" + //shows when there is a monster in the room
-                        "6. Game options\n");//opens sub menu
-        System.out.println("Enter your choice");
-        System.out.print(">>");
-        int menuChoice = input.nextInt();
-        if (menuChoice == 6) {
-            //sub menu
-            System.out.println("1. Show game instructions\n" +
-                    "2. Load game\n" +
-                    "3. Save game\n" +
-                    "4. Show keyboard commands\n" +
-                    "5. Change keyboard commands\n" +
-                    "6. Quit game\n");
-            System.out.println("Enter your choice");
-            System.out.print(">>");
-            int subMenuChoice = input.nextInt();
-            return subMenuChoice + 10;
-        }else{
-            turnCounter++;
-            switch (menuChoice){
-
-            }
-        }
-        return menuChoice;
+        return false;
     }
 
     private void exitGame() {
-        int mainMenuChoice = printMainMenu();
-        if (mainMenuChoice == 2) {
+        System.out.println("Are you sure? (Y)es/(N)o");
+        String exitChoice = in.nextLine();
+        // Matches currently Y,y,Yes,yes,Yea,yea,Yeah,Yeap,yeah,yeap
+        String pattern = "^[Yy]{1}((es){0,1}|(ea){0,1}[hp]{0,1})$"; //if curious: https://regex101.com/r/AAw9Ry/1
+        if (exitChoice.matches(pattern)) {
             System.exit(0);
-        }else{
-            printGameMenu();
         }
     }
 }

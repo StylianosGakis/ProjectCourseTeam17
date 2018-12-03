@@ -6,17 +6,17 @@
 
 package GamePackage.CreaturesStuff;
 
-import GamePackage.Game;
 import GamePackage.MapStuff.Room;
 
 public class Hero extends Creature {
     // Field variables
     private HeroClass heroClass;
+    private boolean isBoy;
     // TODO add keys
     // TODO add backpack
 
     // Constructors
-    public Hero(String name, Room roomCurrentlyInside, int maxHealth, int damage, HeroClass heroClass) {
+    public Hero(String name, Room roomCurrentlyInside, int maxHealth, int damage, HeroClass heroClass, boolean isBoy) {
         super(name, roomCurrentlyInside, maxHealth, damage);
         this.heroClass = heroClass;
     }
@@ -29,10 +29,7 @@ public class Hero extends Creature {
     public HeroClass getHeroClass() {
         return heroClass;
     }
-    public void setHeroClass(HeroClass heroClass) {
-        if (Game.debug) {
-            System.out.println("Hero was chosen to be " + heroClass);
-        }
-        this.heroClass = heroClass;
+    public boolean isBoy() {
+        return isBoy;
     }
 }

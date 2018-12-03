@@ -21,4 +21,5 @@ public final class Shortcuts {
     public static int mapUp = 8;
     public static int mapRight = 6;
     public static int mapDown = 2;
+    public static int cancelAction = 0;
 }
