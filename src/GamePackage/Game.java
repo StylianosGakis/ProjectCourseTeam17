@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class Game {
+public class Game<in> {
     /**
      * @param debug could be used to print some values for debugging purposes, false if no extra printing has to happen.
      */
@@ -28,7 +28,11 @@ public class Game {
     private Scanner in = new Scanner(System.in);
     private Map map;
     private Hero hero;
+
     private SecureRandom rand = new SecureRandom();
+    private int turnCounter = 1;
+
+
     // Setup stuff
 
     /**
@@ -69,9 +73,28 @@ public class Game {
     private void createHero() {
         // We start our hero on TOP LEFT position.
         int initialStartingPosition = 0;
-        hero = new Hero("Hero name",
+        System.out.println("Are you boy or a girl? 1/2");
+
+        boolean genderBoy;
+        if (in.nextInt() == 1){
+            genderBoy = true;
+        } else {
+            genderBoy = false;
+        }
+        System.out.println("What is your name?");
+        String name = in.next();
+        System.out.println("Which class are you?");
+        System.out.println("1. Warrior");
+        System.out.println("2. Mage");
+        System.out.println("3. Rogue");
+        int heroClassChoice = in.nextInt();
+        hero = new Hero(name,
                 map.getRoom(initialStartingPosition, initialStartingPosition),
                 10, 10, HeroClass.WARRIOR);
+        if (heroClassChoice == 2)
+            hero.setHeroClass(HeroClass.MAGE);
+        if (heroClassChoice == 3)
+            hero.setHeroClass(HeroClass.ROGUE);
         hero.getRoomCurrentlyInside().setExplored(true);
     }
 
@@ -79,7 +102,7 @@ public class Game {
      * Will be called inside setupGame to place everything in the correct positions TODO add randomness to this part.
      */
     private void placeMonsters() {
-        // TODO add new monsters, initially fixed positions and fixed monsters, possibly fixed items as well.
+        // TODO add new monsters, initially fixed positions and fixed monsters.
     }
     private void placeItems(){
         //Loot
@@ -130,6 +153,7 @@ public class Game {
                                 Shortcuts.mapDown + ". DOWN"
                 );
                 int direction = in.nextInt();
+                turnCounter++;
                 // TODO print a different message here if the input does not match any of the shortcuts
                 map.moveCreature(hero, direction);
             } catch (InputMismatchException e) {
@@ -178,6 +202,11 @@ public class Game {
             System.out.print(">>");
             int subMenuChoice = input.nextInt();
             return subMenuChoice + 10;
+        }else{
+            turnCounter++;
+            switch (menuChoice){
+
+            }
         }
         return menuChoice;
     }
