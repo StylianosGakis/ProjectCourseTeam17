@@ -24,7 +24,7 @@ public class Game {
     private Scanner in = new Scanner(System.in);
     private Map map;
     private Hero hero;
-    private int turnCounter = 0;
+    private int turnCounter = 1;
 
     // Setup stuff
 
