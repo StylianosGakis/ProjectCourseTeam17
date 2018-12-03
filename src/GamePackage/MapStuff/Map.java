@@ -147,4 +147,7 @@ public class Map {
     public Room getRoom(int x, int y) {
         return mapArray[x][y];
     }
+    public int getMapSize() {
+        return mapSize;
+    }
 }

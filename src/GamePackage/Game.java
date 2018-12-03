@@ -8,11 +8,15 @@ package GamePackage;
 
 import GamePackage.CreaturesStuff.Hero;
 import GamePackage.CreaturesStuff.HeroClass;
+import GamePackage.ItemsStuff.Item;
+import GamePackage.ItemsStuff.Loot;
 import GamePackage.MapStuff.Map;
 import GamePackage.MenusPackage.Menu;
 import GamePackage.Music.MusicPlayer;
 import GamePackage.Shortcuts.Shortcuts;
 
+import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import java.util.regex.Pattern;
@@ -31,7 +35,10 @@ public class Game {
     private Scanner in = new Scanner(System.in);
     private Map map;
     private Hero hero;
+
+    private SecureRandom rand = new SecureRandom();
     private int turnCounter = 1;
+
 
     // Setup stuff
 
@@ -50,7 +57,8 @@ public class Game {
     private void setupGame() {
         createMap();
         createHero();
-        placeMonstersAndItems();
+        placeMonsters();
+        placeItems();
     }
 
     private void createMap() {
@@ -106,8 +114,23 @@ public class Game {
     /**
      * Will be called inside setupGame to place everything in the correct positions TODO add randomness to this part.
      */
-    private void placeMonstersAndItems() {
-        // TODO add new monsters, initially fixed positions and fixed monsters, possibly fixed items as well.
+    private void placeMonsters() {
+        // TODO add new monsters, initially fixed positions and fixed monsters.
+    }
+    private void placeItems(){
+        //Loot
+        ArrayList<String> LootName = new ArrayList<>();
+        LootName.add("WorriorFoot");
+        LootName.add("ChickenNuget");
+        LootName.add("WitchHart");
+        LootName.add("Monsterteeth");
+
+        ArrayList<Item> itemsList = map.getRoom(0, 0).getItemsList();
+        itemsList.add(new Loot(LootName.get(rand.nextInt(LootName.size()) ) , rand.nextInt(100) + 50));
+        int size = map.getMapSize();
+        System.out.println(map.getRoom(0, 0).getItemsList().get(0));
+
+
     }
 
     // Other methods
@@ -228,6 +251,7 @@ public class Game {
         }
         return false;
     }
+
 
     private void exitGame() {
         System.out.println("Are you sure? (Y)es/(N)o");
