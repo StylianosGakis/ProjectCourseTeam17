@@ -15,7 +15,7 @@ import GamePackage.Shortcuts.Shortcuts;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class Game {
+public class Game<in> {
     /**
      * @param debug could be used to print some values for debugging purposes, false if no extra printing has to happen.
      */
@@ -64,27 +64,28 @@ public class Game {
     private void createHero() {
         // We start our hero on TOP LEFT position.
         int initialStartingPosition = 0;
-        System.out.println("Are you boy or a girl? b/g");
+        System.out.println("Are you boy or a girl? 1/2");
+
         boolean genderBoy;
-        if (in = "b"){
+        if (in.nextInt() == 1){
             genderBoy = true;
         } else {
             genderBoy = false;
         }
         System.out.println("What is your name?");
-        String name = in.next;
+        String name = in.next();
         System.out.println("Which class are you?");
         System.out.println("1. Warrior");
         System.out.println("2. Mage");
         System.out.println("3. Rogue");
-        int heroClassChoice = in.nextInt;
+        int heroClassChoice = in.nextInt();
         hero = new Hero(name,
                 map.getRoom(initialStartingPosition, initialStartingPosition),
                 10, 10, HeroClass.WARRIOR);
-        if (heroClassChoice = 2)
-            hero.setHeroClass = MAGE;
-        if (heroClassChoice = 3)
-            hero.setHeroClass = ROGUE;
+        if (heroClassChoice == 2)
+            hero.setHeroClass(HeroClass.MAGE);
+        if (heroClassChoice == 3)
+            hero.setHeroClass(HeroClass.ROGUE);
         hero.getRoomCurrentlyInside().setExplored(true);
     }
 
