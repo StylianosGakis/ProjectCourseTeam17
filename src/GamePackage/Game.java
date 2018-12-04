@@ -116,6 +116,7 @@ public class Game {
     private void placeMonsters() {
         // TODO add new monsters, initially fixed positions and fixed monsters.
     }
+
     private void placeItems() {
         //Loot
         ArrayList<String> LootName = new ArrayList<>();
@@ -124,14 +125,56 @@ public class Game {
         LootName.add("WitchHart");
         LootName.add("MonsterTeeth");
 
+        int choice;
+        int size = map.getMapSize();
+        int check = 0;
+        ArrayList<Integer> AmountLoot = new ArrayList<>();
+        AmountLoot.add(2);
+        AmountLoot.add(3);
+        AmountLoot.add(4);
+       while (check==0) {
+           System.out.println("Chose amount of loot in map \n 1:Low Amount 2:medium Amount 3: High Amount");
+           choice = in.nextInt();
+           switch (choice) {
+               case 1:
+                   for (int i = 0; i < AmountLoot.get(0); i++) {
+                       ArrayList<Item> itemsList = map.getRoom(rand.nextInt(size), rand.nextInt(size)).getItemsList();
+                       itemsList.add(new Loot(LootName.get(rand.nextInt(LootName.size())), rand.nextInt(100) + 50));
+                   }
+                   check = 1;
+                   break;
+
+               case 2:
+                   for (int i = 0; i < AmountLoot.get(1); i++) {
+                       ArrayList<Item> itemsList = map.getRoom(rand.nextInt(size), rand.nextInt(size)).getItemsList();
+                       itemsList.add(new Loot(LootName.get(rand.nextInt(LootName.size())), rand.nextInt(100) + 50));
+                   }
+                   check = 1;
+                   break;
+
+               case 3:
+                   for (int i = 0; i < AmountLoot.get(2); i++) {
+                       ArrayList<Item> itemsList = map.getRoom(rand.nextInt(size), rand.nextInt(size)).getItemsList();
+                       itemsList.add(new Loot(LootName.get(rand.nextInt(LootName.size())), rand.nextInt(100) + 50));
+                   }
+                   check = 1;
+                   break;
+                default:
+                   System.out.println("Chose between 1/2/3 \n -----------");
+              break;
+           }
+// Put loot in random places 
+       }
         ArrayList<Item> itemsList = map.getRoom(0, 0).getItemsList();
         // one of the 4 values above, value 50-149 randomly.
-        itemsList.add(new Loot(LootName.get(rand.nextInt(LootName.size())), rand.nextInt(100) + 50));
-        // int size = map.getMapSize();
+        itemsList.add(new
+
+                Loot(LootName.get(rand.nextInt(LootName.size())), rand.nextInt(100) + 50));
+
         // System.out.println(map.getRoom(rand.nextInt(size), rand.nextInt(size)).getItemsList().get(0));
 
-
     }
+
 
     // Other methods
 
