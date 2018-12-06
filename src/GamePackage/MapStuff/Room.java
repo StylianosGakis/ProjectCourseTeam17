@@ -1,6 +1,6 @@
 package GamePackage.MapStuff;
 
-import GamePackage.CreaturesStuff.Monster;
+import GamePackage.CreaturesStuff.Creature;
 import GamePackage.ItemsStuff.Item;
 
 import java.util.ArrayList;
@@ -8,11 +8,10 @@ import java.util.ArrayList;
 public class Room {
     // Field variables
     private ArrayList<Item> itemsList = new ArrayList<>();
-    private ArrayList<Monster> monstersList = new ArrayList<>();
+    private ArrayList<Creature> creaturesList = new ArrayList<>();
     private boolean isExplored;
     private int xIndex;
     private int yIndex;
-
     // Constructors
     public Room(int xIndex, int yIndex) {
         this.xIndex = xIndex;
@@ -28,11 +27,11 @@ public class Room {
     public void setItemsList(ArrayList<Item> itemsList) {
         this.itemsList = itemsList;
     }
-    public ArrayList<Monster> getMonstersList() {
-        return monstersList;
+    public ArrayList<Creature> getCreaturesList() {
+        return creaturesList;
     }
-    public void setMonstersList(ArrayList<Monster> monstersList) {
-        this.monstersList = monstersList;
+    public void setCreaturesList(ArrayList<Creature> creaturesList) {
+        this.creaturesList = creaturesList;
     }
     public int getxIndex() {
         return xIndex;
@@ -57,7 +56,7 @@ public class Room {
     public String toString() {
         return "Room{" +
                 "itemsList=" + itemsList +
-                ", monstersList=" + monstersList +
+                ", creaturesList=" + creaturesList +
                 ", isExplored=" + isExplored +
                 ", xIndex=" + xIndex +
                 ", yIndex=" + yIndex +

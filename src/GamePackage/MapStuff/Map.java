@@ -10,12 +10,13 @@ import GamePackage.CreaturesStuff.Creature;
 import GamePackage.Game;
 import GamePackage.Shortcuts.Shortcuts;
 
+import java.security.SecureRandom;
+
 public class Map {
     private int mapSize;
     private Room[][] mapArray;
     private Door[][] verticalDoorArray;
     private Door[][] horizontalDoorArray;
-    private boolean debug = true;
 
     // During the construction of the Map object, we also insert the doors and create the entire map.
     public Map(int mapSize) {
@@ -60,7 +61,7 @@ public class Map {
      * @return returns true if movement was successful, false if it failed
      */
     public boolean moveCreature(Creature creature, int direction) {
-        Door door = getDoor(getCurrentRoom(creature), direction);
+        Door door = getDoor(getRoom(creature), direction);
         if (door == null) {
             System.out.println("There is no door in that direction!");
             return false;
@@ -68,7 +69,7 @@ public class Map {
             System.out.println("That door is locked, you will need the " + door.getDoorColor() + " key to unlock!");
             return false;
         } else { // Door exists, and is unlocked. Move there.
-            Room currentRoom = creature.getRoomCurrentlyInside();
+            Room currentRoom = getRoom(creature);
             if (direction == Shortcuts.mapLeft) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex() - 1, currentRoom.getyIndex()));
             } else if (direction == Shortcuts.mapUp) {
@@ -78,14 +79,14 @@ public class Map {
             } else if (direction == Shortcuts.mapDown) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex(), currentRoom.getyIndex() + 1));
             }
-            creature.getRoomCurrentlyInside().setExplored(true);
+            getRoom(creature).setExplored(true);
             return true;
         }
     }
 
-    // returns current room hero is inside
-    public Room getCurrentRoom(Creature creature) {
-        return creature.getRoomCurrentlyInside();
+    // returns current room creature is inside
+    public Room getRoom(Creature creature) {
+        return this.getRoom(creature.getxIndex(), creature.getyIndex());
     }
 
     /**
@@ -127,15 +128,17 @@ public class Map {
      * TODO Print the world as ASCII art
      */
     public void printMap() {
-        int heroY = Game.hero.getRoomCurrentlyInside().getyIndex();
-        int heroX = Game.hero.getRoomCurrentlyInside().getxIndex();
-        System.out.print("(? = unexplored, I = Item, * = explored, H = hero)\n");
+        int heroY = getRoom(Game.hero).getyIndex();
+        int heroX = getRoom(Game.hero).getxIndex();
+        System.out.print("(? = unexplored, I = Item, * = explored, H = hero, M = Monster)\n");
         for (int y = 0; y < mapSize; y++) {
             for (int x = 0; x < mapSize; x++) {
                 if (y == heroY && x == heroX) {
                     System.out.print("H ");
+                } else if (!getRoom(x, y).getCreaturesList().isEmpty()) {
+                    System.out.print("M "); // MONSTER SHOW just for now.//Todo not show this normally.
                 } else if (!getRoom(x, y).getItemsList().isEmpty()) {
-                    System.out.print("I "); // ITEM SHOW just for now.
+                    System.out.print("I "); // ITEM SHOW just for now.//Todo not show this normally.
                 } else if (getRoom(x, y).isExplored()) {
                     System.out.print("* ");
                 } else {
@@ -144,6 +147,14 @@ public class Map {
             }
             System.out.println();
         }
+    }
+
+    /**
+     * @return Returns a random room from this map, to be used for random inserts etc.
+     */
+    public Room getRandomRoom(){
+        SecureRandom rand = new SecureRandom();
+        return this.getRoom(rand.nextInt(mapSize), rand.nextInt(mapSize));
     }
 
     // Getters and Setters

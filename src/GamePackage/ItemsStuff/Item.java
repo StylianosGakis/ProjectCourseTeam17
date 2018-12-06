@@ -28,6 +28,6 @@ public abstract class Item {
 
     @Override
     public String toString() {
-        return "Item: " + name + "\t";
+        return "Item: " + name + " ";
     }
 }
