@@ -2,9 +2,11 @@ package GamePackage.MenusPackage;
 
 import java.util.Scanner;
 
-public final class Menu {
+public final class MenuPrints {
     private static final Scanner in = new Scanner(System.in);
 
+    private MenuPrints() {
+    }
     public static int mainMenu() {
         System.out.println();
         System.out.println("MENU");

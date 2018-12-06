@@ -18,6 +18,8 @@ package ArtPackage;
  * cleaner by getting rid of the possible multi-line ASCII art that we might have for our game.
  */
 public final class Art {
+    private Art() {
+    }
     public static void printMap() {
         System.out.println("\n" +
                 "88,dPYba,,adPYba,  ,adPPYYba, 8b,dPPYba,\n" +

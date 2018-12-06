@@ -11,15 +11,17 @@ import GamePackage.MapStuff.Room;
 public abstract class Creature {
     // Field variables
     private String name;
-    private Room roomCurrentlyInside;
+    private int xIndex;
+    private int yIndex;
     private int maxHealth;
     private int currentHealth;
     private int damage;
 
     // Constructors
-    public Creature(String name, Room roomCurrentlyInside, int maxHealth, int damage) {
+    public Creature(String name, int xIndex, int yIndex, int maxHealth, int damage) {
         this.name = name;
-        this.roomCurrentlyInside = roomCurrentlyInside;
+        this.xIndex = xIndex;
+        this.yIndex = yIndex;
         this.maxHealth = maxHealth;
         this.damage = damage;
 
@@ -35,11 +37,17 @@ public abstract class Creature {
     public void setName(String name) {
         this.name = name;
     }
-    public Room getRoomCurrentlyInside() {
-        return roomCurrentlyInside;
+    public int getxIndex() {
+        return xIndex;
     }
-    public void setRoomCurrentlyInside(Room roomCurrentlyInside) {
-        this.roomCurrentlyInside = roomCurrentlyInside;
+    public void setxIndex(int xIndex) {
+        this.xIndex = xIndex;
+    }
+    public int getyIndex() {
+        return yIndex;
+    }
+    public void setyIndex(int yIndex) {
+        this.yIndex = yIndex;
     }
     public int getMaxHealth() {
         return maxHealth;
@@ -58,5 +66,22 @@ public abstract class Creature {
     }
     public void setDamage(int damage) {
         this.damage = damage;
+    }
+
+    public void setRoomCurrentlyInside(Room room){
+        this.setxIndex(room.getxIndex());
+        this.setyIndex(room.getyIndex());
+    }
+
+    @Override
+    public String toString() {
+        return "Creature{" +
+                "name='" + name + '\'' +
+                ", xIndex=" + xIndex +
+                ", yIndex=" + yIndex +
+                ", maxHealth=" + maxHealth +
+                ", currentHealth=" + currentHealth +
+                ", damage=" + damage +
+                '}';
     }
 }

@@ -22,4 +22,7 @@ public final class Shortcuts {
     public static int mapRight = 6;
     public static int mapDown = 2;
     public static int cancelAction = 0;
+
+    private Shortcuts() {
+    }
 }

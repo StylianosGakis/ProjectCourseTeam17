@@ -26,6 +26,6 @@ public class Loot extends Item {
     @Override
     public String toString() {
         return super.toString() +
-                "Value: " + worthInCoins + "\t";
+                "Value: " + worthInCoins + " ";
     }
 }

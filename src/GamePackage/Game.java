@@ -9,16 +9,18 @@ package GamePackage;
 import ArtPackage.Art;
 import GamePackage.CreaturesStuff.Hero;
 import GamePackage.CreaturesStuff.HeroClass;
+import GamePackage.CreaturesStuff.Monster;
 import GamePackage.ItemsStuff.Item;
 import GamePackage.ItemsStuff.Loot;
 import GamePackage.MapStuff.Map;
 import GamePackage.MapStuff.Room;
-import GamePackage.MenusPackage.Menu;
+import GamePackage.MenusPackage.MenuPrints;
 import GamePackage.Music.MusicPlayer;
 import GamePackage.Shortcuts.Shortcuts;
 
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -27,14 +29,10 @@ public class Game {
     TODO - create a method that will receive some parameters, and return back a number but will loop forever until an
     integer is inserted
     */
-    // debug could be used to print some values for debugging purposes, false if no extra printing has to happen.
-    public static boolean debug = false;
-
+    public static Hero hero;
     // Field variables
     private Scanner in = new Scanner(System.in);
     private Map map;
-    public static Hero hero;
-
     private SecureRandom rand = new SecureRandom();
     private int turnCounter = 1;
 
@@ -80,6 +78,9 @@ public class Game {
     private void createHero() {
         // We start our hero on TOP LEFT position.
         int initialStartingPosition = 0;
+        int startingHealth = 100;
+        int startingDamage = 10;
+
         System.out.print("Are you boy or a girl?\n1. Boy\n2. Girl\n>> ");
         boolean genderChoice;
         if (in.nextInt() == 1) {
@@ -105,76 +106,95 @@ public class Game {
             heroClass = HeroClass.ROGUE;
         }
         hero = new Hero(name,
-                map.getRoom(initialStartingPosition,
-                        initialStartingPosition), 10, 10, heroClass, genderChoice);
-        hero.getRoomCurrentlyInside().setExplored(true);
+                initialStartingPosition,
+                initialStartingPosition,
+                startingHealth,
+                startingDamage,
+                heroClass,
+                genderChoice);
+        map.getRoom(hero).setExplored(true);
     }
 
     /**
-     * Will be called inside setupGame to place everything in the correct positions TODO add randomness to this part.
+     * Will be called inside setupGame to place everything in the correct positions
      */
     private void placeMonsters() {
-        // TODO add new monsters, initially fixed positions and fixed monsters.
+        int minHealth = 40; // edit here
+        int maxHealth = 80; // edit here
+        int minDamage = 4; // edit here
+        int maxDamage = 8; // edit here
+        maxDamage -= minDamage;
+        maxHealth -= minHealth;
+
+        //Monster names
+        ArrayList<String> monsterName = new ArrayList<>();
+        monsterName.addAll(Arrays.asList("Ogre Magi", "Spirit Breaker", "Ember Spirit", "Earth Spirit"));
+
+        int choice;
+        System.out.print("Chose amount of monsters in map \n 1. Low Amount\n2. Medium Amount\n3. High Amount\n>> ");
+        choice = in.nextInt();
+        while (choice < 1 || choice > 3) {
+            System.out.print("Please enter a proper value!\n1. Low Amount\n2. Medium Amount\n3. High Amount\n>> ");
+            choice = in.nextInt();
+        }
+        in.nextLine();
+
+        // Multiple of 1 if low, multiple of 2 if med, multiple of 3 if high.
+        // Example, if map is 5x5. low = 5 monsters, medium = 10 monsters, high = 15 monsters.
+        int numberOfMonstersToSpawn = map.getMapSize() * choice;
+
+        for (int i = 0; i < numberOfMonstersToSpawn; i++) {
+            Room randomRoom = map.getRandomRoom(); // gets a random room from our map
+            // If it tries to spawn inside of a room that already has another creature (or the hero) inside, don't.
+            if (randomRoom.getCreaturesList().isEmpty()) {
+                // adds to the item arraylist of that room
+                randomRoom.getCreaturesList()
+                        .add(new Monster(monsterName.get(rand.nextInt(monsterName.size())),
+                                randomRoom.getxIndex(),
+                                randomRoom.getyIndex(),
+                                rand.nextInt(minHealth) + maxHealth,
+                                rand.nextInt(minDamage) + maxDamage,
+                                null));
+            } else {
+                i--; // Decrease the counter so that we don't skip a monster, we just put it to another place.
+            }
+        }
     }
 
     private void placeItems() {
-        //Loot
+        int lootMinValue = 100; // edit here
+        int lootMaxValue = 150; // edit here
+        lootMaxValue -= lootMinValue;
+
+        //Loot names
         ArrayList<String> LootName = new ArrayList<>();
-        LootName.add("WarriorFoot");
-        LootName.add("ChickenNugget");
-        LootName.add("WitchHart");
-        LootName.add("MonsterTeeth");
+        LootName.add("Warrior Foot");
+        LootName.add("Chicken Nugget");
+        LootName.add("Witch Heart");
+        LootName.add("Monster Tooth");
+
 
         int choice;
-        int size = map.getMapSize();
-        int check = 0;
-        ArrayList<Integer> AmountLoot = new ArrayList<>();
-        AmountLoot.add(2);
-        AmountLoot.add(3);
-        AmountLoot.add(4);
-       while (check==0) {
-           System.out.println("Chose amount of loot in map \n 1:Low Amount 2:medium Amount 3: High Amount");
-           choice = in.nextInt();
-           switch (choice) {
-               case 1:
-                   for (int i = 0; i < AmountLoot.get(0); i++) {
-                       ArrayList<Item> itemsList = map.getRoom(rand.nextInt(size), rand.nextInt(size)).getItemsList();
-                       itemsList.add(new Loot(LootName.get(rand.nextInt(LootName.size())), rand.nextInt(100) + 50));
-                   }
-                   check = 1;
-                   break;
+        System.out.print("Chose amount of loot in map \n 1. Low Amount\n2. Medium Amount\n3. High Amount\n>> ");
+        choice = in.nextInt();
+        while (choice < 1 || choice > 3) {
+            System.out.print("Please enter a proper value!\n1. Low Amount\n2. Medium Amount\n3. High Amount\n>> ");
+            choice = in.nextInt();
+        }
+        in.nextLine();
 
-               case 2:
-                   for (int i = 0; i < AmountLoot.get(1); i++) {
-                       ArrayList<Item> itemsList = map.getRoom(rand.nextInt(size), rand.nextInt(size)).getItemsList();
-                       itemsList.add(new Loot(LootName.get(rand.nextInt(LootName.size())), rand.nextInt(100) + 50));
-                   }
-                   check = 1;
-                   break;
+        // Multiple of 1 if low, mult of 2 if med, mult of 3 if high.
+        // Example, if map is 5x5. low = 5 items, medium = 10 items, high = 15 items.
+        int numberOfItemsToBeMade = map.getMapSize() * choice;
 
-               case 3:
-                   for (int i = 0; i < AmountLoot.get(2); i++) {
-                       ArrayList<Item> itemsList = map.getRoom(rand.nextInt(size), rand.nextInt(size)).getItemsList();
-                       itemsList.add(new Loot(LootName.get(rand.nextInt(LootName.size())), rand.nextInt(100) + 50));
-                   }
-                   check = 1;
-                   break;
-                default:
-                   System.out.println("Chose between 1/2/3 \n -----------");
-              break;
-           }
-// Put loot in random places 
-       }
-        ArrayList<Item> itemsList = map.getRoom(0, 0).getItemsList();
-        // one of the 4 values above, value 50-149 randomly.
-        itemsList.add(new
-
-                Loot(LootName.get(rand.nextInt(LootName.size())), rand.nextInt(100) + 50));
-
-        // System.out.println(map.getRoom(rand.nextInt(size), rand.nextInt(size)).getItemsList().get(0));
-
+        for (int i = 0; i < numberOfItemsToBeMade; i++) {
+            Room randomRoom = map.getRandomRoom(); // gets a random room from our map
+            // adds to the item arraylist of that room
+            randomRoom.getItemsList()
+                    .add(new Loot(LootName.get(rand.nextInt(LootName.size())),
+                            rand.nextInt(lootMinValue) + lootMaxValue));
+        }
     }
-
 
     // Other methods
 
@@ -195,7 +215,7 @@ public class Game {
             System.out.println("Start of turn: " + turnCounter);
             boolean inMenu = true;
             while (inMenu) {
-                int menuChoice = Menu.mainMenu();
+                int menuChoice = MenuPrints.mainMenu();
                 inMenu = handleMenuChoice(menuChoice);
             }
             //TODO rest of turn. Here monsters move etc. then the loop goes back and we are on next turn
@@ -222,8 +242,10 @@ public class Game {
             showItemsInRoom();
             // pickup item
         } else if (menuChoice == 3) {
+            placeMonsters();
             // drop item
         } else if (menuChoice == 4) {
+            System.out.println(map.getRoom(hero).getCreaturesList());
             // fight
         } else if (menuChoice == 5) {
             // flee
@@ -231,7 +253,7 @@ public class Game {
             inSubMenu = true; // enter the sub menu loop
         }
         while (inSubMenu) {
-            int subChoice = Menu.subMenu();
+            int subChoice = MenuPrints.subMenu();
             inSubMenu = handleSubMenu(subChoice);
         }
         return true;
@@ -300,7 +322,7 @@ public class Game {
     }
 
     private void showItemsInRoom() {
-        Room currentRoom = hero.getRoomCurrentlyInside();
+        Room currentRoom = map.getRoom(hero);
         if (currentRoom.getItemsList().isEmpty()) {
             System.out.println("There are no items in this room!");
         } else {
@@ -323,8 +345,8 @@ public class Game {
     private void exitGame() {
         System.out.println("Are you sure? (Y)es/(N)o");
         String exitChoice = in.nextLine();
-        // Matches currently Y,y,Yes,yes,Yea,yea,Yeah,Yeap,yeah,yeap
-        String pattern = "^[Yy]{1}((es){0,1}|(ea){0,1}[hp]{0,1})$"; //if curious: https://regex101.com/r/AAw9Ry/1
+        // Matches currently Y,y,Yes,yes,Yep,yep,Yea,yea,Yeah,yeah,Yeap,yeap
+        String pattern = "^[Yy]{1}((es){0,1}|(ep){0,1}|(ea){0,1}[hp]{0,1})$"; //if curious: https://regex101.com/r/AAw9Ry/1
         if (exitChoice.matches(pattern)) {
             System.exit(0);
         }

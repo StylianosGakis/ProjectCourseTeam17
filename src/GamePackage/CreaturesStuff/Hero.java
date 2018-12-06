@@ -6,19 +6,20 @@
 
 package GamePackage.CreaturesStuff;
 
-import GamePackage.MapStuff.Room;
+import GamePackage.MapStuff.Map;
 
 public class Hero extends Creature {
     // Field variables
     private HeroClass heroClass;
     private boolean isBoy;
-    // TODO add keys
     // TODO add backpack
+    // TODO add keys
 
     // Constructors
-    public Hero(String name, Room roomCurrentlyInside, int maxHealth, int damage, HeroClass heroClass, boolean isBoy) {
-        super(name, roomCurrentlyInside, maxHealth, damage);
+    public Hero(String name, int xIndex, int yIndex, int maxHealth, int damage, HeroClass heroClass, boolean isBoy) {
+        super(name, xIndex, yIndex, maxHealth, damage);
         this.heroClass = heroClass;
+        this.isBoy = isBoy;
     }
 
 
