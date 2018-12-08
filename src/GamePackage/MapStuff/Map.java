@@ -8,7 +8,7 @@ package GamePackage.MapStuff;
 
 import GamePackage.CreaturesStuff.Creature;
 import GamePackage.Game;
-import GamePackage.Shortcuts.Shortcuts;
+import GamePackage.ShortcutPackage.MapShortcuts;
 
 import java.security.SecureRandom;
 
@@ -38,7 +38,7 @@ public class Map {
         // doors = ( size * size - size ) * 2 for example if size is 4, we have 24 doors, 12 vertical and 12 horizontal
         // Information about Door[][] arrays inside Door class
 
-        // Initialize all as unlocked and no color for now TODO add randomness to keep some entrances closed?
+        // Initialize all as unlocked and no color for now TODO add randomness to keep some entrances closed? (99% NO)
         // Vertical doors
         verticalDoorArray = new Door[mapSize][mapSize - 1]; // Create the vertical door array
         for (int i = 0; i < verticalDoorArray.length; i++) {
@@ -56,27 +56,28 @@ public class Map {
     }
 
     /**
-     * @param creature which Creature is to be moved
-     * @param direction which direction it should be moved (from Shortcuts mapUp,mapDown,mapLeft,mapRight)
+     * @param creature  which Creature is to be moved
+     * @param direction which direction it should be moved (from MapShortcuts mapUp,mapDown,mapLeft,mapRight)
      * @return returns true if movement was successful, false if it failed
      */
-    public boolean moveCreature(Creature creature, int direction) {
+    // TODO don't let the a monster creature move if there is another monster there
+    public boolean moveCreature(Creature creature, Character direction) {
         Door door = getDoor(getRoom(creature), direction);
         if (door == null) {
             System.out.println("There is no door in that direction!");
             return false;
-        } else if (door.isLocked()) { // TODO add unlocking option if we do have the key
+        } else if (door.isLocked()) { // TODO unlocking option if we do have the key, prob only work for hero object.
             System.out.println("That door is locked, you will need the " + door.getDoorColor() + " key to unlock!");
             return false;
         } else { // Door exists, and is unlocked. Move there.
             Room currentRoom = getRoom(creature);
-            if (direction == Shortcuts.mapLeft) {
+            if (direction == (MapShortcuts.getValue(MapShortcuts.LEFT))) { //TODO  also make it check for lowercase vice-versa
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex() - 1, currentRoom.getyIndex()));
-            } else if (direction == Shortcuts.mapUp) {
+            } else if (direction == MapShortcuts.getValue(MapShortcuts.UP)) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex(), currentRoom.getyIndex() - 1));
-            } else if (direction == Shortcuts.mapRight) {
+            } else if (direction == MapShortcuts.getValue(MapShortcuts.RIGHT)) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex() + 1, currentRoom.getyIndex()));
-            } else if (direction == Shortcuts.mapDown) {
+            } else if (direction == MapShortcuts.getValue(MapShortcuts.DOWN)) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex(), currentRoom.getyIndex() + 1));
             }
             getRoom(creature).setExplored(true);
@@ -99,21 +100,21 @@ public class Map {
      * @param direction To which direction of the referenced room we are searching at.
      * @return returns the door if it exists, otherwise null.
      */
-    public Door getDoor(Room room, int direction) {
-        // Reminder
+    public Door getDoor(Room room, Character direction) {
+        // Reminder TODO check if the comment is correct or not
         // If we want 🡹 door of a room[x][y], we do verticalDoorArray[x][y-1]
         // If we want 🡻 door of a room[x][y], we do verticalDoorArray[x][y]
         // If we want 🡸 door of a room[x][y], we do horizontalDoorArray[x-1][y]
         // If we want 🡺 door of a room[x][y], we do horizontalDoorArray[x][y]
         try {
             Door door = null;
-            if (direction == Shortcuts.mapLeft) {
+            if (direction == MapShortcuts.getValue(MapShortcuts.LEFT)) {
                 door = horizontalDoorArray[room.getxIndex() - 1][room.getyIndex()];
-            } else if (direction == Shortcuts.mapUp) {
+            } else if (direction == MapShortcuts.getValue(MapShortcuts.UP)) {
                 door = verticalDoorArray[room.getxIndex()][room.getyIndex() - 1];
-            } else if (direction == Shortcuts.mapRight) {
+            } else if (direction == MapShortcuts.getValue(MapShortcuts.RIGHT)) {
                 door = horizontalDoorArray[room.getxIndex()][room.getyIndex()];
-            } else if (direction == Shortcuts.mapDown) {
+            } else if (direction == MapShortcuts.getValue(MapShortcuts.DOWN)) {
                 door = verticalDoorArray[room.getxIndex()][room.getyIndex()];
             }
             return door;
@@ -152,7 +153,7 @@ public class Map {
     /**
      * @return Returns a random room from this map, to be used for random inserts etc.
      */
-    public Room getRandomRoom(){
+    public Room getRandomRoom() {
         SecureRandom rand = new SecureRandom();
         return this.getRoom(rand.nextInt(mapSize), rand.nextInt(mapSize));
     }
