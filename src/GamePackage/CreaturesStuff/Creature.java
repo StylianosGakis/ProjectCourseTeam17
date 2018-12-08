@@ -6,6 +6,7 @@
 
 package GamePackage.CreaturesStuff;
 
+import GamePackage.Game;
 import GamePackage.MapStuff.Room;
 
 public abstract class Creature {
@@ -68,9 +69,15 @@ public abstract class Creature {
         this.damage = damage;
     }
 
-    public void setRoomCurrentlyInside(Room room){
+    public void setRoomCurrentlyInside(Room room) {
+        // Take old room and remove this creature from there.
+        Game.map.getRoom(this.xIndex, this.yIndex).getCreaturesList().remove(this);
+
         this.setxIndex(room.getxIndex());
         this.setyIndex(room.getyIndex());
+
+        // Add this creature to the new room.
+        room.getCreaturesList().add(this);
     }
 
     @Override

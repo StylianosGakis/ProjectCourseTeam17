@@ -6,8 +6,6 @@
 
 package GamePackage.CreaturesStuff;
 
-import GamePackage.MapStuff.Map;
-
 public class Hero extends Creature {
     // Field variables
     private HeroClass heroClass;

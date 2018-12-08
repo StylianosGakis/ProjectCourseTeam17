@@ -1,40 +1,33 @@
 package GamePackage.MenusPackage;
 
-import java.util.Scanner;
+import GamePackage.ShortcutPackage.MainMenuShortcuts;
+import GamePackage.ShortcutPackage.SubMenuShortcuts;
+import GamePackage.HelperClassPackage.Help;
 
 public final class MenuPrints {
-    private static final Scanner in = new Scanner(System.in);
 
     private MenuPrints() {
     }
-    public static int mainMenu() {
-        System.out.println();
-        System.out.println("MENU");
-        System.out.println("1. Move\n" +
-                "2. Pick up item\n" +
-                "3. Drop item\n" +
-                "4. Fight\n" + //shows when there is a monster in the room //TODO print ONLY if monster is here
-                "5. Flee\n" + //shows when there is a monster in the room
-                "6. Game options\n"); //opens sub menu
-        System.out.println("Enter your choice");
-        System.out.print(">> ");
-        int returnValue = in.nextInt();
-        in.nextLine();
-        return returnValue;
+
+    public static Character mainMenu() {
+        System.out.println("--- Main menu ---");
+        System.out.print(MainMenuShortcuts.getMenuChoice(MainMenuShortcuts.MOVE) + // Move in the map
+                MainMenuShortcuts.getMenuChoice(MainMenuShortcuts.PICK) + // Pickup item todo pickup item
+                MainMenuShortcuts.getMenuChoice(MainMenuShortcuts.DROP) + // Drop an item todo drop item
+                MainMenuShortcuts.getMenuChoice(MainMenuShortcuts.OPTIONS) + //opens sub menu
+                "5. Fight\n" + //shows when there is a monster in the room // TODO move to fight menu
+                "6. Flee\n" //shows when there is a monster in the room // TODO move to fight menu
+        );
+        return Help.readCharUntilOneMatch(MainMenuShortcuts.getValue(MainMenuShortcuts.MOVE),
+                MainMenuShortcuts.getValue(MainMenuShortcuts.PICK),
+                MainMenuShortcuts.getValue(MainMenuShortcuts.DROP),
+                MainMenuShortcuts.getValue(MainMenuShortcuts.OPTIONS)
+        );
     }
 
-    public static int subMenu() {
-        System.out.println("1. Show game instructions\n" +
-                "2. Load game\n" +
-                "3. Save game\n" +
-                "4. Show keyboard commands\n" +
-                "5. Change keyboard commands\n" +
-                "6. Quit game\n" +
-                "7. Back to previous menu\n");
-        System.out.println("Enter your choice");
-        System.out.print(">> ");
-        int returnValue = in.nextInt();
-        in.nextLine();
-        return returnValue;
+    public static Character subMenu() {
+        System.out.println("--- Game options ---");
+        System.out.print(SubMenuShortcuts.getAllMenuChoices());
+        return Help.readCharUntilOneMatch(SubMenuShortcuts.getAllHashMapValues());
     }
 }
