@@ -6,6 +6,7 @@
 
 package GamePackage;
 
+import GamePackage.CreaturesStuff.Creature;
 import GamePackage.CreaturesStuff.Hero;
 import GamePackage.CreaturesStuff.HeroClass;
 import GamePackage.CreaturesStuff.Monster;
@@ -39,6 +40,64 @@ public class Game {
     private int turnCounter = 1;
     ArrayList<Item> inventory = new ArrayList<>();
     // Setup stuff
+
+    public boolean checkDeath(Creature creature) {
+        if (hero.getCurrentHealth() <= 0) {
+            System.out.println("Alas! You died! The monster wins :(");
+            heroDied();
+            return true;
+        } else if (creature.getCurrentHealth() <= 0) {
+            System.out.println("Amazing! You win!");
+            return true;
+        }
+        return false;
+    }
+
+    public int fightingMenu() {
+        System.out.println("What would you like to do now?");
+        System.out.println("1. Hit");
+        System.out.println("2. Drink potion");
+        System.out.println("3. Flee (75% chance)");
+        System.out.println("Enter your choice");
+        System.out.print(">> ");
+        int action = in.nextInt();
+        return action;
+    }
+
+    public void fight(Monster monster) {
+        //TODO enter fighting menu
+
+        boolean stopFight = false;
+        System.out.println("Alas! You encountered a bloodthirsty enemy. Now it is time to prove your worth and defeat it!");
+
+        fight:
+        {
+            while (hero.getCurrentHealth() > 0 && monster.getCurrentHealth() > 0) {
+                int choice = fightingMenu();
+                switch (choice) {
+                    case 1:
+                        System.out.println("Wohoo! You throw a devastating blow!");
+                        monster.setCurrentHealth(monster.getCurrentHealth() - hero.getDamage());
+                        stopFight = checkDeath(monster);
+                        if (stopFight) {
+                            break fight;
+                        }
+                        break;
+                    case 2:
+                        //todo check inventory and use item possibly
+                        break;
+                    case 3:
+                        //todo add flee handling
+                        break;
+                }
+
+                hero.setCurrentHealth(hero.getCurrentHealth() - monster.getDamage());
+                System.out.println("Oof! You got hit and you started bleeding!");
+                checkDeath(monster); // here if hero dies the game will just end
+
+            }
+        }
+    }
 
     /**
      * Method called from main method that manages the order that stuff has to be done to start the game
@@ -146,7 +205,7 @@ public class Game {
             Room randomRoom = map.getRandomRoom(); // gets a random room from our map
             // If it tries to spawn inside of a room that already has another creature (or the hero) inside, don't.
             if (randomRoom.getCreaturesList().isEmpty()) {
-                // adds to the item arraylist of that room
+                // adds to the item arrayList of that room
                 randomRoom.getCreaturesList()
                         .add(new Monster(monsterName.get(rand.nextInt(monsterName.size())),
                                 randomRoom.getxIndex(),
@@ -159,7 +218,6 @@ public class Game {
             }
         }
     }
-
 
     /**
      * Will be called inside setupGame to place items in the correct positions
@@ -337,6 +395,7 @@ public class Game {
         }
     }
 
+
     private void exitGame() {
         System.out.print("Are you sure? (Y)es/(N)o\nEnter your choice\n>> ");
         String exitChoice = in.nextLine();
@@ -345,6 +404,10 @@ public class Game {
         if (exitChoice.matches(pattern)) {
             System.exit(0);
         }
+    }
+
+    private void heroDied(){
+        //TODO handle the death of the hero, print high score and exit the game, go to main menu
     }
 }
 
