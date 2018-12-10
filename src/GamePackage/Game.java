@@ -36,7 +36,7 @@ public class Game {
     private static Scanner in = new Scanner(System.in);
     private SecureRandom rand = new SecureRandom();
     private int turnCounter = 1;
-    ArrayList<Item> inventory = new ArrayList<>();
+
     // Setup stuff
 
     /**
@@ -113,7 +113,7 @@ public class Game {
                 startingHealth,
                 startingDamage,
                 heroClass,
-                genderChoice, startingHealth, inventory);
+                genderChoice, startingHealth);
         map.getRoom(hero).setExplored(true);
         map.getRoom(hero).getCreaturesList().add(hero);
     }
@@ -304,18 +304,37 @@ public class Game {
         return false;
     }
 
-    private void showItemsInRoom() {
+    private void showInvenrtoy() {
         Room currentRoom = map.getRoom(hero);
-        if (currentRoom.getItemsList().isEmpty()) {
-            System.out.println("There are no items in this room!");
+        if (hero.getInventory().isEmpty()) {
+            System.out.println("You have no items!");
         } else {
-            System.out.print("This is the list of items in this room:\n");
-            for (Item element : currentRoom.getItemsList()) {
-                System.out.println(element);
+            System.out.print("Inventory:\n");
+            for (int i = 0; i < hero.getInventory().size(); i++) {
+                System.out.println(i + ". " + currentRoom.getItemsList().get(i));
             }
-            System.out.println("Would you like to pick one up?");
-            // TODO add non-troll picking-up method that shows all items and user can choose what to pick up.
-            System.out.println("Well even if you wanted to, you can't yet.");
+
+            while (!hero.getInventory().isEmpty()) {
+                System.out.printf("Would you like to:\n" +
+                        "1. Drop Item\n" +
+                        "2. Use Item\n");
+                char dropOrUse = Help.readChar();
+                int dropOrUseInt = Character.getNumericValue(dropOrUse);
+                if (dropOrUseInt == 1) {
+                    System.out.println("Enter the number of the item to drop");
+                    int itemChoice = in.nextInt();
+                    try {
+                        currentRoom.getItemsList().add(currentRoom.getItemsList().get(itemChoice));
+                        hero.getInventory().remove(itemChoice);
+                    }catch (Exception e){
+                        System.out.println("Wrong input");
+                    }
+                }else{
+
+                }
+
+            }
+        }
             System.out.print("Press F to continue\n>> ");
             String keyPressed = in.nextLine();
             // https://regex101.com/r/S7oMZL/1
@@ -323,8 +342,37 @@ public class Game {
                 System.out.print("That's not F!\n>> ");
                 keyPressed = in.nextLine();
             }
+    }
+
+    private void showItemsInRoom() {
+        Room currentRoom = map.getRoom(hero);
+        if (currentRoom.getItemsList().isEmpty()) {
+            System.out.println("There are no items in this room!");
+        } else {
+            System.out.print("This is the list of items in this room:\n");
+            for (int i = 0; i < currentRoom.getItemsList().size(); i++) {
+                System.out.println(i + ". " + currentRoom.getItemsList().get(i));
+            }
+            while (!currentRoom.getItemsList().isEmpty()) {
+                System.out.println("Enter the number of the item to pick up or anything else for exiting");
+                int itemChoice = in.nextInt();
+                try {
+                    hero.getInventory().add(currentRoom.getItemsList().get(itemChoice));
+                    currentRoom.getItemsList().remove(itemChoice);
+                }catch (Exception e){
+                    System.out.println("Wrong input");
+                }
+            }
+        }
+        System.out.print("Press F to continue\n>> ");
+        String keyPressed = in.nextLine();
+        // https://regex101.com/r/S7oMZL/1
+        while (!keyPressed.matches("([Ff]){1,}")) {
+            System.out.print("That's not F!\n>> ");
+            keyPressed = in.nextLine();
         }
     }
+
 
     private void exitGame() {
         System.out.print("Are you sure? (Y)es/(N)o\nEnter your choice\n>> ");

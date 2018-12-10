@@ -15,17 +15,17 @@ public class Hero extends Creature {
     private HeroClass heroClass;
     private boolean isBoy;
     private int currentHealth;
-    private ArrayList inventory;
+    private ArrayList<Item> inventory;
     // TODO add backpack
     // TODO add keys
 
     // Constructors
-    public Hero(String name, int xIndex, int yIndex, int maxHealth, int damage, HeroClass heroClass, boolean isBoy, int currentHealth, ArrayList inventory) {
+    public Hero(String name, int xIndex, int yIndex, int maxHealth, int damage, HeroClass heroClass, boolean isBoy, int currentHealth) {
         super(name, xIndex, yIndex, maxHealth, damage);
         this.currentHealth = currentHealth;
         this.heroClass = heroClass;
         this.isBoy = isBoy;
-        this.inventory = inventory;
+        inventory = new ArrayList<>();
     }
 
 
