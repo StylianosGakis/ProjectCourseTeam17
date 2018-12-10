@@ -36,7 +36,7 @@ public class Game {
     private static Scanner in = new Scanner(System.in);
     private SecureRandom rand = new SecureRandom();
     private int turnCounter = 1;
-
+    ArrayList<Item> inventory = new ArrayList<>();
     // Setup stuff
 
     /**
@@ -113,7 +113,7 @@ public class Game {
                 startingHealth,
                 startingDamage,
                 heroClass,
-                genderChoice);
+                genderChoice, startingHealth, inventory);
         map.getRoom(hero).setExplored(true);
         map.getRoom(hero).getCreaturesList().add(hero);
     }
