@@ -6,18 +6,26 @@
 
 package GamePackage.CreaturesStuff;
 
+import GamePackage.ItemsStuff.Item;
+
+import java.util.ArrayList;
+
 public class Hero extends Creature {
     // Field variables
     private HeroClass heroClass;
     private boolean isBoy;
+    private int currentHealth;
+    private ArrayList inventory;
     // TODO add backpack
     // TODO add keys
 
     // Constructors
-    public Hero(String name, int xIndex, int yIndex, int maxHealth, int damage, HeroClass heroClass, boolean isBoy) {
+    public Hero(String name, int xIndex, int yIndex, int maxHealth, int damage, HeroClass heroClass, boolean isBoy, int currentHealth, ArrayList inventory) {
         super(name, xIndex, yIndex, maxHealth, damage);
+        this.currentHealth = currentHealth;
         this.heroClass = heroClass;
         this.isBoy = isBoy;
+        this.inventory = inventory;
     }
 
 
@@ -30,5 +38,23 @@ public class Hero extends Creature {
     }
     public boolean isBoy() {
         return isBoy;
+    }
+
+    public ArrayList getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(ArrayList inventory) {
+        this.inventory = inventory;
+    }
+
+    @Override
+    public int getCurrentHealth() {
+        return currentHealth;
+    }
+
+    @Override
+    public void setCurrentHealth(int currentHealth) {
+        this.currentHealth = currentHealth;
     }
 }

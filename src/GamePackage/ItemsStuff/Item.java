@@ -10,6 +10,7 @@ public abstract class Item {
     // Field variables
     private String name;
 
+
     // Constructors
     public Item(String name) {
         this.name = name;
