@@ -12,13 +12,13 @@ public class Food extends Item {
      * Might include usesLeft, and have the items be used more than once, and then make it able to discard it once it
      * has no uses left (or even before that if the player wishes to do so)
      */
-    private int usesLeft;
+
 
     // Constructors
-    public Food(String name, int healthRestored, int usesLeft) {
+    public Food(String name, int healthRestored) {
         super(name);
         this.healthRestored = healthRestored;
-        this.usesLeft = usesLeft;
+
     }
 
     // Methods
@@ -27,13 +27,14 @@ public class Food extends Item {
     public int getHealthRestored() {
         return healthRestored;
     }
+
     public void setHealthRestored(int healthRestored) {
         this.healthRestored = healthRestored;
     }
-    public int getUsesLeft() {
-        return usesLeft;
-    }
-    public void setUsesLeft(int usesLeft) {
-        this.usesLeft = usesLeft;
+
+    public String toString() {
+        return super.toString() +
+                "Restores: " + healthRestored + "  Health ";
     }
 }
+

@@ -10,6 +10,7 @@ import GamePackage.CreaturesStuff.Hero;
 import GamePackage.CreaturesStuff.HeroClass;
 import GamePackage.CreaturesStuff.Monster;
 import GamePackage.HelperClassPackage.Help;
+import GamePackage.ItemsStuff.Food;
 import GamePackage.ItemsStuff.Item;
 import GamePackage.ItemsStuff.Loot;
 import GamePackage.MapStuff.Map;
@@ -167,6 +168,9 @@ public class Game {
         int lootMinValue = 100; // edit here
         int lootMaxValue = 150; // edit here
         lootMaxValue -= lootMinValue;
+        int foodMinHealth = (int) (hero.getMaxHealth() * 0.2);
+        int foodMaxHealth = (int) (hero.getMaxHealth() * 0.4);
+        foodMaxHealth -= foodMinHealth;
 
         //Loot names
         ArrayList<String> LootName = new ArrayList<>();
@@ -174,7 +178,10 @@ public class Game {
         LootName.add("Chicken Nugget");
         LootName.add("Witch Heart");
         LootName.add("Monster Tooth");
-
+        ArrayList<String> FoodName = new ArrayList<>();
+        FoodName.add("Fish");
+        FoodName.add("Bread");
+        FoodName.add("Cheese");
         System.out.println("Chose amount of loot in map \n1. Low Amount\n2. Medium Amount\n3. High Amount");
         Character choice = Help.readCharUntilOneMatch('1', '2', '3');
         int numChoice = Character.getNumericValue(choice);
@@ -182,13 +189,17 @@ public class Game {
         // Multiple of 1 if low, mult of 2 if med, mult of 3 if high.
         // Example, if map is 5x5. low = 5 items, medium = 10 items, high = 15 items.
         int numberOfItemsToBeMade = map.getMapSize() * numChoice;
-
         for (int i = 0; i < numberOfItemsToBeMade; i++) {
-            Room randomRoom = map.getRandomRoom(); // gets a random room from our map
+            Room randomRoomL = map.getRandomRoom(); // gets a random room from our map
             // adds to the item arraylist of that room
-            randomRoom.getItemsList()
+            randomRoomL.getItemsList()
                     .add(new Loot(LootName.get(rand.nextInt(LootName.size())),
                             rand.nextInt(lootMinValue) + lootMaxValue));
+            Room randomRoomF = map.getRandomRoom();
+            randomRoomF.getItemsList()
+                    .add(new Food(FoodName.get(rand.nextInt(FoodName.size())),
+                            rand.nextInt(foodMinHealth) + foodMaxHealth));
+
         }
     }
 
