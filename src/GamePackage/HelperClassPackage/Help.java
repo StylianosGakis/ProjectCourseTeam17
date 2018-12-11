@@ -6,6 +6,7 @@
 
 package GamePackage.HelperClassPackage;
 
+import GamePackage.ShortcutPackage.FightShortcuts;
 import GamePackage.ShortcutPackage.MainMenuShortcuts;
 import GamePackage.ShortcutPackage.MapShortcuts;
 import GamePackage.ShortcutPackage.SubMenuShortcuts;
@@ -62,10 +63,10 @@ public final class Help {
 
     /**
      * Same as the above class, but accepts a List<Character> directly instead of a bunch of single Characters
+     *
      * @param characterList The characters that the input has to match to. At least one of them
      * @return The character that was finally matched
      */
-    // todo one that accepts a list and then also varargs of character (low priority)
     public static Character readCharUntilOneMatch(List<Character> characterList) {
         Character choice = readChar();
         while (!characterList.contains(choice)) {
@@ -85,7 +86,10 @@ public final class Help {
         printSubMenuKeyBindings();
         System.out.println("--- Map menu options ---");
         printMapMenuKeyBindings();
+        System.out.println("--- Fighting options ---");
+        printFightingKeyBindings();
     }
+
 
     private static void printMainMenuKeyBindings() {
         System.out.println(MainMenuShortcuts.getAllKeyBinds());
@@ -99,6 +103,10 @@ public final class Help {
         System.out.println(MapShortcuts.getAllKeyBinds());
     }
 
+    private static void printFightingKeyBindings() {
+        System.out.println(FightShortcuts.getAllKeyBinds());
+    }
+
     /**
      * Handles the change of the keybinds, uses the private methods inside this class for each case.
      */
@@ -107,8 +115,8 @@ public final class Help {
         Help.printAllKeyBindings();
         System.out.println();
         System.out.println("Which key bindings would you like to change");
-        System.out.println("1. Main menu\n2. Sub menu\n3. Map menu\n4. Cancel change");
-        Character choice = Help.readCharUntilOneMatch('1', '2', '3', '4');
+        System.out.println("1. Main menu\n2. Sub menu\n3. Map menu\n4. Fighting menu\n5. Cancel change");
+        Character choice = Help.readCharUntilOneMatch('1', '2', '3', '4', '5');
         if (choice == '1') {
             changeMainMenuKeyBindings();
         } else if (choice == '2') {
@@ -116,6 +124,8 @@ public final class Help {
         } else if (choice == '3') {
             changeMapMenuKeyBindings();
         } else if (choice == '4') {
+            changeFightingKeyBindings();
+        } else if (choice == '5') {
             System.out.println("Key-bind change has been canceled");
         }
     }
@@ -150,6 +160,30 @@ public final class Help {
         Character newKeyBind = readChar();
         if (!MapShortcuts.setValue(MapShortcuts.getKeyFromValue(keyBindChoice), newKeyBind)) {
             System.out.println("The change has failed, canceling change");
+        }
+    }
+
+    private static void changeFightingKeyBindings() {
+        System.out.println("Which key-bind do you want to change");
+        printFightingKeyBindings();
+        Character keyBindChoice = readCharUntilOneMatch(FightShortcuts.getAllHashMapValues());
+        System.out.println("What do you want the new key-bind to be");
+        Character newKeyBind = readChar();
+        if (!FightShortcuts.setValue(FightShortcuts.getKeyFromValue(keyBindChoice), newKeyBind)) {
+            System.out.println("The change has failed, canceling change");
+        }
+    }
+
+    public static void clearScreen() {
+        for (int i = 0; i < 10; i++) {
+            System.out.println("\n\n\n\n\n\n\n\n\n\n");
+        }
+    }
+    public static void sleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e){
+            e.printStackTrace();
         }
     }
 }

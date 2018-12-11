@@ -72,13 +72,13 @@ public class Map {
         } else { // Door exists, and is unlocked. Move there.
             Room currentRoom = getRoom(creature);
             if (direction == (MapShortcuts.getValue(MapShortcuts.LEFT))) { //TODO  also make it check for lowercase vice-versa
-                creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex() - 1, currentRoom.getyIndex()));
+                creature.setRoomCurrentlyInside(getRoom(currentRoom.getXIndex() - 1, currentRoom.getYIndex()));
             } else if (direction == MapShortcuts.getValue(MapShortcuts.UP)) {
-                creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex(), currentRoom.getyIndex() - 1));
+                creature.setRoomCurrentlyInside(getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() - 1));
             } else if (direction == MapShortcuts.getValue(MapShortcuts.RIGHT)) {
-                creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex() + 1, currentRoom.getyIndex()));
+                creature.setRoomCurrentlyInside(getRoom(currentRoom.getXIndex() + 1, currentRoom.getYIndex()));
             } else if (direction == MapShortcuts.getValue(MapShortcuts.DOWN)) {
-                creature.setRoomCurrentlyInside(getRoom(currentRoom.getxIndex(), currentRoom.getyIndex() + 1));
+                creature.setRoomCurrentlyInside(getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() + 1));
             }
             getRoom(creature).setExplored(true);
             return true;
@@ -87,7 +87,7 @@ public class Map {
 
     // returns current room creature is inside
     public Room getRoom(Creature creature) {
-        return this.getRoom(creature.getxIndex(), creature.getyIndex());
+        return this.getRoom(creature.getXIndex(), creature.getYIndex());
     }
 
     /**
@@ -109,13 +109,13 @@ public class Map {
         try {
             Door door = null;
             if (direction == MapShortcuts.getValue(MapShortcuts.LEFT)) {
-                door = horizontalDoorArray[room.getxIndex() - 1][room.getyIndex()];
+                door = horizontalDoorArray[room.getXIndex() - 1][room.getYIndex()];
             } else if (direction == MapShortcuts.getValue(MapShortcuts.UP)) {
-                door = verticalDoorArray[room.getxIndex()][room.getyIndex() - 1];
+                door = verticalDoorArray[room.getXIndex()][room.getYIndex() - 1];
             } else if (direction == MapShortcuts.getValue(MapShortcuts.RIGHT)) {
-                door = horizontalDoorArray[room.getxIndex()][room.getyIndex()];
+                door = horizontalDoorArray[room.getXIndex()][room.getYIndex()];
             } else if (direction == MapShortcuts.getValue(MapShortcuts.DOWN)) {
-                door = verticalDoorArray[room.getxIndex()][room.getyIndex()];
+                door = verticalDoorArray[room.getXIndex()][room.getYIndex()];
             }
             return door;
         } catch (ArrayIndexOutOfBoundsException outOfBounds) {
@@ -129,8 +129,8 @@ public class Map {
      * TODO Print the world as ASCII art
      */
     public void printMap() {
-        int heroY = getRoom(Game.hero).getyIndex();
-        int heroX = getRoom(Game.hero).getxIndex();
+        int heroY = getRoom(Game.hero).getYIndex();
+        int heroX = getRoom(Game.hero).getXIndex();
         System.out.print("(? = unexplored, I = Item, * = explored, H = hero, M = Monster)\n");
         for (int y = 0; y < mapSize; y++) {
             for (int x = 0; x < mapSize; x++) {
@@ -148,6 +148,8 @@ public class Map {
             }
             System.out.println();
         }
+
+        Game.showItemsInRoom();
     }
 
     /**
@@ -165,4 +167,5 @@ public class Map {
     public int getMapSize() {
         return mapSize;
     }
+
 }

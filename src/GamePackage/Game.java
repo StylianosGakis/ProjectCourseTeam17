@@ -18,6 +18,7 @@ import GamePackage.MapStuff.Map;
 import GamePackage.MapStuff.Room;
 import GamePackage.MenusPackage.MenuPrints;
 import GamePackage.Music.MusicPlayer;
+import GamePackage.ShortcutPackage.FightShortcuts;
 import GamePackage.ShortcutPackage.MainMenuShortcuts;
 import GamePackage.ShortcutPackage.MapShortcuts;
 import GamePackage.ShortcutPackage.SubMenuShortcuts;
@@ -32,71 +33,44 @@ public class Game {
 
     public static Hero hero;
     public static Map map;
+    private static Scanner in = new Scanner(System.in);
 
     // Field variables
-
-    private static Scanner in = new Scanner(System.in);
+    public final int fightDelay = 100;
+    private String yesPattern = "^[Yy]{1}((es){0,1}|(ep){0,1}|(ea){0,1}[hp]{0,1})$"; //todo a No Pattern
+    // Matches currently Y,y,Yes,yes,Yep,yep,Yea,yea,Yeah,yeah,Yeap,yeap
+    //if curious: https://regex101.com/r/AAw9Ry/1v
     private SecureRandom rand = new SecureRandom();
     private int turnCounter = 1;
 
     // Setup stuff
+    public static boolean showItemsInRoom() {
+        Room currentRoom = map.getRoom(hero);
+        ArrayList<Item> roomItems = currentRoom.getItemsList();
+        System.out.println();
+        if (roomItems.isEmpty()) {
+            System.out.println("There are no items in the room!");
+            return false;
+        } else {
+            System.out.print("This is the list of items in this room:\n");
+            for (int i = 0; i < roomItems.size(); i++) {
+                System.out.println((i + 1) + ". " + roomItems.get(i));
+            }
+        }
+        return true;
+    }
 
     public boolean checkDeath(Creature creature) {
         if (hero.getCurrentHealth() <= 0) {
-            System.out.println("Alas! You died! The monster wins :(");
+            System.out.println("\nAlas! " + hero.getName() + " died! The monster wins :( (╯°□°）╯︵ ┻━┻");
             heroDied();
             return true;
         } else if (creature.getCurrentHealth() <= 0) {
-            System.out.println("Amazing! You win!");
+            System.out.println("Amazing! " + hero.getName() + " won!");
+            map.getRoom(creature).getCreaturesList().remove(creature);
             return true;
         }
         return false;
-    }
-
-    public int fightingMenu() {
-        System.out.println("What would you like to do now?");
-        System.out.println("1. Hit");
-        System.out.println("2. Drink potion");
-        System.out.println("3. Flee (75% chance)");
-        System.out.println("Enter your choice");
-        System.out.print(">> ");
-        int action = in.nextInt();
-        return action;
-    }
-
-    public void fight(Monster monster) {
-        //TODO enter fighting menu
-
-        boolean stopFight = false;
-        System.out.println("Alas! You encountered a bloodthirsty enemy. Now it is time to prove your worth and defeat it!");
-
-        fight:
-        {
-            while (hero.getCurrentHealth() > 0 && monster.getCurrentHealth() > 0) {
-                int choice = fightingMenu();
-                switch (choice) {
-                    case 1:
-                        System.out.println("Wohoo! You throw a devastating blow!");
-                        monster.setCurrentHealth(monster.getCurrentHealth() - hero.getDamage());
-                        stopFight = checkDeath(monster);
-                        if (stopFight) {
-                            break fight;
-                        }
-                        break;
-                    case 2:
-                        //todo check inventory and use item possibly
-                        break;
-                    case 3:
-                        //todo add flee handling
-                        break;
-                }
-
-                hero.setCurrentHealth(hero.getCurrentHealth() - monster.getDamage());
-                System.out.println("Oof! You got hit and you started bleeding!");
-                checkDeath(monster); // here if hero dies the game will just end
-
-            }
-        }
     }
 
     /**
@@ -107,10 +81,10 @@ public class Game {
         setupGame();
         runGame();
     }
-
     /**
      * All the initial stuff that has to be done in order for the game to be setup well, like initializing the map etc.
      */
+
     private void setupGame() {
         createMap();
         createHero();
@@ -146,14 +120,10 @@ public class Game {
         int startingHealth = 100;
         int startingDamage = 10;
 
-        System.out.println("Choose character gender\n1. Male\n2. Female");
-        Character genderInput = Help.readCharUntilOneMatch('1', '2');
-        boolean genderChoice = (genderInput == '1');
-        System.out.println("Gender picked: " + (genderChoice ? "Male" : "Female"));
-        System.out.print("What is your name?\n>> ");
+        System.out.print("\nWhat is your name?\n>> ");
         String name = in.nextLine();
         System.out.println("Name saved: " + name);
-        System.out.println("Which class are you?");
+        System.out.println("\nWhich class are you?");
         System.out.println("1. Warrior");
         System.out.println("2. Mage");
         System.out.println("3. Rogue");
@@ -172,8 +142,7 @@ public class Game {
                 initialStartingPosition,
                 startingHealth,
                 startingDamage,
-                heroClass,
-                genderChoice, startingHealth);
+                heroClass);
         map.getRoom(hero).setExplored(true);
         map.getRoom(hero).getCreaturesList().add(hero);
     }
@@ -194,7 +163,7 @@ public class Game {
                 Arrays.asList("Ogre Magi", "Spirit Breaker", "Ember Spirit", "Earth Spirit")
         );
 
-        System.out.println("Chose amount of monsters in map \n1. Low Amount\n2. Medium Amount\n3. High Amount");
+        System.out.println("\nChose amount of monsters in map \n1. Low Amount\n2. Medium Amount\n3. High Amount");
         Character choice = Help.readCharUntilOneMatch('1', '2', '3');
         int numChoice = Character.getNumericValue(choice);
         // Multiple of 1 if low, multiple of 2 if med, multiple of 3 if high.
@@ -208,8 +177,8 @@ public class Game {
                 // adds to the item arrayList of that room
                 randomRoom.getCreaturesList()
                         .add(new Monster(monsterName.get(rand.nextInt(monsterName.size())),
-                                randomRoom.getxIndex(),
-                                randomRoom.getyIndex(),
+                                randomRoom.getXIndex(),
+                                randomRoom.getYIndex(),
                                 rand.nextInt(minHealth) + maxHealth,
                                 rand.nextInt(minDamage) + maxDamage,
                                 null));
@@ -219,6 +188,7 @@ public class Game {
         }
     }
 
+    // Other methods
     /**
      * Will be called inside setupGame to place items in the correct positions
      */
@@ -240,7 +210,7 @@ public class Game {
         FoodName.add("Fish");
         FoodName.add("Bread");
         FoodName.add("Cheese");
-        System.out.println("Chose amount of loot in map \n1. Low Amount\n2. Medium Amount\n3. High Amount");
+        System.out.println("\nChose amount of loot in map \n1. Low Amount\n2. Medium Amount\n3. High Amount");
         Character choice = Help.readCharUntilOneMatch('1', '2', '3');
         int numChoice = Character.getNumericValue(choice);
 
@@ -261,8 +231,6 @@ public class Game {
         }
     }
 
-    // Other methods
-
     /**
      * @param musicPath should be given in the format of: "MusicFiles/fileName.wav"
      */
@@ -276,17 +244,114 @@ public class Game {
      */
     private void runGame() {
         while (true) {
-            playMusic("MusicFiles/smb_world_clear.wav");
-            System.out.println("Start of turn: " + turnCounter);
+            System.out.println("Press any key to start turn: " + turnCounter);
+            playMusic("MusicFiles/smb_world_clear.wav"); // todo move this to appropriate position?
+            in.nextLine();
+            Help.clearScreen();
+            System.out.println("Start of turn: " + turnCounter + "\n");
+
+            map.printMap();
+
             boolean inMenu = true;
             while (inMenu) {
                 Character menuChoice = MenuPrints.mainMenu();
                 inMenu = handleMenuChoice(menuChoice);
             }
             //TODO rest of turn. Here monsters move etc. then the loop goes back and we are on next turn
+            checkForFight();
 
             turnCounter++; // increase turn number at the end of loop before we go to the next turn
         }
+    }
+
+    private boolean checkForFight() {
+        Room currentRoom = map.getRoom(hero);
+        Monster monster = null;
+        if (currentRoom.getCreaturesList().size() != 2) { // 2 means the hero and 1 more thing which must be monster
+            return false;
+        } else {
+            for (Creature creature : currentRoom.getCreaturesList()) { // loop through the array and get the monster
+                if (creature instanceof Monster) {
+                    monster = (Monster) creature;
+                }
+            }
+        }
+        if (monster != null) {
+            fight(monster);
+        }
+        return true;
+    }
+
+    public void fight(Monster monster) {
+        //TODO enter fighting menu
+        System.out.println("\nAlas! " + hero.getName() + " has encountered a bloodthirsty enemy. " +
+                "Now it is time to prove your worth and defeat it!");//todo random encounter quotes
+
+        boolean inLoop = true;
+        while (inLoop) {
+            System.out.print(FightShortcuts.getAllMenuChoices());
+            Character actionChoice = Help.readChar();
+            if (!FightShortcuts.getAllHashMapValues().contains(actionChoice)) {
+                System.out.println("Your hand must have slipped, maybe you should change your key-bindings?");
+            } else if (actionChoice == FightShortcuts.getValue(FightShortcuts.INVENTORY)) {
+                if (consumeFood()) { // true if USED a potion so much commence with the fight
+                    inLoop = fightTurn(monster, actionChoice);
+                }
+            } else {
+                inLoop = fightTurn(monster, actionChoice);
+            }
+        }
+        System.out.println("The fight is over");
+    }
+
+    /**
+     * @param monster the monster that is fighting the hero
+     * @param choice  the menu choice from player
+     * @return false if the fight is over
+     */
+    private boolean fightTurn(Monster monster, char choice) {
+
+        if (choice == FightShortcuts.getValue(FightShortcuts.ATTACK)) {
+            //todo random attack quotes
+            int heroDamage = hero.getDamage();
+            System.out.println(hero.getName() + " prepares for attack!");
+            Help.sleep(fightDelay);
+            System.out.println("Wohoo! " + hero.getName() + " throws a devastating blow dealing " + heroDamage + " damage");
+            Help.sleep(fightDelay);
+            monster.setCurrentHealth(monster.getCurrentHealth() - heroDamage);
+            System.out.println(monster.getName() + " health is now " + monster.getCurrentHealth() + "/" + monster.getMaxHealth());
+            boolean stopFight = checkDeath(monster);
+            if (stopFight) {
+                return false;
+            }
+        } else if (choice == FightShortcuts.getValue(FightShortcuts.INVENTORY)) {
+            // here we wasted a turn on drinking potion
+            System.out.println(hero.getName() + " at some food, " + monster.getName() + " takes advantage of " +
+                    "that and jumps to attack without giving any chance to react");
+        } else if (choice == FightShortcuts.getValue(FightShortcuts.FLEE)) {
+            int roll = rand.nextInt(100);
+            if (roll < 75) {
+                Room lastRoom = hero.getOldRoom();
+                hero.setRoomCurrentlyInside(lastRoom);
+                System.out.println(hero.getName() + " escaped with " + hero.getCurrentHealth() + " health.");
+                System.out.println("The map now looks like this");
+                map.printMap();
+                Help.sleep(fightDelay);
+                return false;
+            } else {
+                System.out.println(hero.getName() + " tried to flee but failed, the monster takes advantage of " +
+                        "that mistake");
+            }
+        }
+        System.out.println("\nThe enemy prepares to attack!");
+        Help.sleep(fightDelay);
+        int monsterDamage = monster.getDamage();
+        System.out.println(monster.getName() + " hit " + hero.getName() + " for " + monsterDamage + " damage");
+        Help.sleep(fightDelay);
+        hero.setCurrentHealth(hero.getCurrentHealth() - monsterDamage);
+        System.out.println(hero.getName() + " health is now " + hero.getCurrentHealth() + "/" + hero.getMaxHealth());
+        checkDeath(monster); // here if hero dies the game will just end otherwise nothing happens.
+        return true;
     }
 
     /**
@@ -299,24 +364,29 @@ public class Game {
         if (menuChoice == MainMenuShortcuts.getValue(MainMenuShortcuts.MOVE)) { // 1. Move
             boolean successfulMove = handleMovement();
             if (successfulMove) {
-                System.out.println("New map status:\n");
-                map.printMap();
-                return false; // end the turn if the move was made
+                System.out.println(hero.getName() + " has moved");
+                return false; // end the turn since the move was made
             }
         } else if (menuChoice == MainMenuShortcuts.getValue(MainMenuShortcuts.PICK)) { // 2. pickup items
-            showItemsInRoom();
+            pickupItem();
             // pickup item
         } else if (menuChoice == MainMenuShortcuts.getValue(MainMenuShortcuts.DROP)) { // 3. drop items
-            placeMonsters();
+            dropItem();
             // drop item
         } else if (menuChoice == MainMenuShortcuts.getValue(MainMenuShortcuts.OPTIONS)) { // 4. Open game options
             // enter the sub menu loop
             inSubMenu = true;
-        } else if (menuChoice == 5) { // TODO remove this from here and put on fighting menu
-            // fight
-            System.out.println(map.getRoom(hero).getCreaturesList());
-        } else if (menuChoice == 6) { // TODO remove this from here and put on fighting menu
-            // flee
+        } else if (menuChoice == MainMenuShortcuts.getValue(MainMenuShortcuts.MAP)) {
+            map.printMap(); // simply print the map
+        } else if (menuChoice == MainMenuShortcuts.getValue(MainMenuShortcuts.FOOD)) {
+            boolean hasItem = showInventory("FOOD");
+            if (hasItem) {
+                System.out.print("Do you want to eat one of the foods?\nYes/No\n>> ");
+                String answer = in.nextLine();
+                if (answer.matches(yesPattern)){
+                    consumeFood();
+                }
+            }
         }
         while (inSubMenu) {
             Character subChoice = MenuPrints.subMenu();
@@ -373,89 +443,161 @@ public class Game {
         return false;
     }
 
-    private void showInvenrtoy() {
-        Room currentRoom = map.getRoom(hero);
+    /**
+     * @param type the type of items looking for (key, loot, food)
+     * @return false if found nothing of that type, true if found even one
+     */
+    private boolean showInventory(String type) {
         if (hero.getInventory().isEmpty()) {
-            System.out.println("You have no items!");
+            System.out.println("" + hero.getName() + " has no items!");
+            return false;
         } else {
             System.out.print("Inventory:\n");
-            for (int i = 0; i < hero.getInventory().size(); i++) {
-                System.out.println(i + ". " + currentRoom.getItemsList().get(i));
-            }
-
-            while (!hero.getInventory().isEmpty()) {
-                System.out.printf("Would you like to:\n" +
-                        "1. Drop Item\n" +
-                        "2. Use Item\n");
-                char dropOrUse = Help.readChar();
-                int dropOrUseInt = Character.getNumericValue(dropOrUse);
-                if (dropOrUseInt == 1) {
-                    System.out.println("Enter the number of the item to drop");
-                    int itemChoice = in.nextInt();
-                    try {
-                        currentRoom.getItemsList().add(currentRoom.getItemsList().get(itemChoice));
-                        hero.getInventory().remove(itemChoice);
-                    }catch (Exception e){
-                        System.out.println("Wrong input");
+            if (type.equalsIgnoreCase("ALL")) {
+                for (int i = 0; i < hero.getInventory().size(); i++) {
+                    System.out.println((i + 1) + ". " + hero.getInventory().get(i));
+                }
+            } else if (type.equalsIgnoreCase("FOOD")) {
+                boolean containsFood = false;
+                for (int i = 0; i < hero.getInventory().size(); i++) {
+                    if (hero.getInventory().get(i) instanceof Food) {
+                        System.out.println((i + 1) + ". " + hero.getInventory().get(i));
+                        containsFood = true;
                     }
-                }else{
-
                 }
-
+                return containsFood;
             }
+            return true;
         }
-            System.out.print("Press F to continue\n>> ");
-            String keyPressed = in.nextLine();
-            // https://regex101.com/r/S7oMZL/1
-            while (!keyPressed.matches("([Ff]){1,}")) {
-                System.out.print("That's not F!\n>> ");
-                keyPressed = in.nextLine();
-            }
     }
 
-    private void showItemsInRoom() {
+    private void dropItem() {
+        boolean hasItems = showInventory("ALL");
+
         Room currentRoom = map.getRoom(hero);
-        if (currentRoom.getItemsList().isEmpty()) {
-            System.out.println("There are no items in this room!");
-        } else {
-            System.out.print("This is the list of items in this room:\n");
-            for (int i = 0; i < currentRoom.getItemsList().size(); i++) {
-                System.out.println(i + ". " + currentRoom.getItemsList().get(i));
-            }
-            while (!currentRoom.getItemsList().isEmpty()) {
-                System.out.println("Enter the number of the item to pick up or anything else for exiting");
-                int itemChoice = in.nextInt();
-                try {
-                    hero.getInventory().add(currentRoom.getItemsList().get(itemChoice));
-                    currentRoom.getItemsList().remove(itemChoice);
-                }catch (Exception e){
-                    System.out.println("Wrong input");
-                }
-            }
+
+        if (hasItems) {
+            System.out.print("Enter the number of the item to drop\n>> ");
         }
-        System.out.print("Press F to continue\n>> ");
-        String keyPressed = in.nextLine();
-        // https://regex101.com/r/S7oMZL/1
-        while (!keyPressed.matches("([Ff]){1,}")) {
-            System.out.print("That's not F!\n>> ");
-            keyPressed = in.nextLine();
+        while (hasItems) {
+            try {
+                int itemChoice = in.nextInt(); // we print the items from 1 not from 0 so all must be adjusted later
+                if ((itemChoice < 1) || (itemChoice > hero.getInventory().size())) {
+                    System.out.println("There is no such item, enter a proper number\n>> ");
+                } else {
+                    currentRoom.getItemsList().add(hero.getInventory().get(itemChoice - 1)); // -1 since we get input from 1 from user
+                    hero.getInventory().remove(itemChoice - 1);
+                    hasItems = false;
+                }
+            } catch (Exception e) {
+                in.nextLine(); //todo check if this input works
+                System.out.print("Wrong input, please enter a number!\n>> ");
+            } finally {
+                in.nextLine(); // to catch the hanging enter
+            }
         }
     }
 
+    /**
+     * @return true if used one (skip turn) false if not (don't use turn)
+     */
+    private boolean consumeFood() {
+        boolean hasItems = showInventory("FOOD");
+
+        if (hasItems) {
+            System.out.println("Current HP/Max HP - " + hero.getCurrentHealth() + "/" + hero.getMaxHealth());
+            System.out.print("Enter the number of the food to consume or 0 to cancel\n>> ");
+        }
+        while (hasItems) {
+            try {
+                int itemChoice = in.nextInt(); // we print the items from 1 not from 0 so all must be adjusted later
+                if (itemChoice == 0) {
+                    System.out.println("Canceling using item");
+                    return false;
+                } else if ((itemChoice < 1) || (itemChoice > hero.getInventory().size())) {
+                    System.out.println("There is no such item, enter a proper number\n>> ");
+                } else {
+                    if (hero.getInventory().get(itemChoice - 1) instanceof Food) {
+                        consumeFood((Food) hero.getInventory().get(itemChoice - 1));
+                        return true;
+                    } else {
+                        System.out.println("That's not food");
+                    }
+                    hasItems = false;
+                }
+            } catch (Exception e) {
+                in.nextLine(); //todo check if this input works
+                System.out.print("Wrong input, please enter a number!\n>> ");
+            } finally {
+                in.nextLine(); // to catch the hanging enter
+            }
+        }
+        return false;
+    }
+
+    private void consumeFood(Food food) {
+        int health = food.getHealthRestored();
+        hero.heal(health);
+        hero.getInventory().remove(food);
+    }
+
+    private void pickupItem() {
+        boolean hasItems = showItemsInRoom();
+        Room currentRoom = null;
+        ArrayList<Item> roomItems = null;
+
+        if (hasItems) {
+            System.out.print("Enter the number of the item to pick up or 0 to cancel\n>> ");
+            currentRoom = map.getRoom(hero);
+            roomItems = currentRoom.getItemsList();
+        }
+        while (hasItems) {
+            try {
+                int itemChoice = in.nextInt(); // we print the items from 1 not from 0 so all must be adjusted later
+                if (itemChoice == 0) {
+                    return;
+                } else if ((itemChoice < 1) || itemChoice > roomItems.size()) {
+                    System.out.println("There is no such item, enter a proper number\n>> ");
+                } else {
+                    Item itemPickedUp = roomItems.get(itemChoice - 1); // - 1 since we print them starting from 1.
+                    if (itemPickedUp instanceof Loot) {
+                        hero.pickupLoot((Loot) itemPickedUp);
+                        System.out.println(itemPickedUp + " has added " + ((Loot) itemPickedUp).getWorthInCoins() +
+                                " value to your high score. Your current score is now: " + hero.getScore());
+                    } else {
+                        hero.getInventory().add(itemPickedUp);
+                        System.out.println(itemPickedUp + " has been picked up.");
+                    }
+                    roomItems.remove(itemPickedUp);
+                    hasItems = false;
+                }
+            } catch (InputMismatchException e) {
+                in.nextLine(); //todo check if this input works
+                System.out.print("Wrong input, please enter a number!\n>> ");
+            } finally {
+                in.nextLine();
+            }
+        }
+    }
 
     private void exitGame() {
         System.out.print("Are you sure? (Y)es/(N)o\nEnter your choice\n>> ");
         String exitChoice = in.nextLine();
-        // Matches currently Y,y,Yes,yes,Yep,yep,Yea,yea,Yeah,yeah,Yeap,yeap
-        String pattern = "^[Yy]{1}((es){0,1}|(ep){0,1}|(ea){0,1}[hp]{0,1})$"; //if curious: https://regex101.com/r/AAw9Ry/1
-        if (exitChoice.matches(pattern)) {
+        if (exitChoice.matches(yesPattern)) {
             System.exit(0);
         }
     }
 
-    private void heroDied(){
-        //TODO handle the death of the hero, print high score and exit the game, go to main menu
+    private void heroDied() {
+        System.out.println(hero.getName() + " has died.");
+        System.out.println("Your high score was");
+        System.out.println(hero.getScore());
+        System.out.print("Press anything to continue ");
+        in.nextLine();
+        Main main = new Main();
+        main.runMyProgram();
     }
 }
+
 
 
