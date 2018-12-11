@@ -1,7 +1,7 @@
 /*
  * Class created by Stylianos Gakis
  * Student of HKR with code STGA0006
- * Created Friday, 07/12/2018 at 21:15
+ * Created Monday, 10/12/2018 at 16:50
  */
 
 package GamePackage.ShortcutPackage;
@@ -10,45 +10,38 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public class MainMenuShortcuts extends Shortcuts {
-    public final static String MOVE = "Move hero";
-    public final static String PICK = "Pickup item";
-    public final static String DROP = "Drop item";
-    public final static String OPTIONS = "Game options";
-    public final static String MAP = "Show map";
-    public final static String FOOD = "Show foods";
-
+public class FightShortcuts extends Shortcuts {
+    public final static String ATTACK = "Attack enemy";
+    public final static String INVENTORY = "Open inventory";
+    public final static String FLEE = "Flee fight";
 
     private static HashMap<String, Character> map = new LinkedHashMap<>() {{
-        put(MOVE, '1');
-        put(PICK, '2');
-        put(DROP, '3');
-        put(OPTIONS, '4');
-        put(MAP, '5');
-        put(FOOD, '6');
+        put(ATTACK, '1');
+        put(INVENTORY, '2');
+        put(FLEE, '3');
     }};
 
     // Private constructor to prevent from creating useless objects of this class.
-    private MainMenuShortcuts() {
+    private FightShortcuts() {
     }
 
     public static String getKeyFromValue(Character value) {
         return getKeyFromValue(value, map);
     }
 
-    public static String getAllKeyBinds(){
+    public static String getAllKeyBinds() {
         return getAllKeyBinds(map);
     }
 
-    public static List<Character> getAllHashMapValues(){
+    public static List<Character> getAllHashMapValues() {
         return getAllHashMapValues(map);
     }
 
-    public static String getAllMenuChoices(){
+    public static String getAllMenuChoices() {
         return getAllMenuChoices(map);
     }
 
-    public static String getMenuChoice(String key){
+    public static String getMenuChoice(String key) {
         return getMenuChoice(key, map);
     }
 

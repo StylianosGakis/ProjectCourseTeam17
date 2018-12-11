@@ -18,9 +18,11 @@ public abstract class Shortcuts {
      */
     protected static String getAllMenuChoices(HashMap<String, Character> map) {
         StringBuilder returnString = new StringBuilder();
+        returnString.append("\n");
         for (String key : map.keySet()) {
             returnString.append(getMenuChoice(key, map));
         }
+        returnString.append("\n");
         return returnString.toString();
     }
 

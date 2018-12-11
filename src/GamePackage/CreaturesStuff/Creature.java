@@ -9,11 +9,15 @@ package GamePackage.CreaturesStuff;
 import GamePackage.Game;
 import GamePackage.MapStuff.Room;
 
+import java.security.SecureRandom;
+
 public abstract class Creature {
     // Field variables
     private String name;
     private int xIndex;
     private int yIndex;
+    private int lastXIndex;
+    private int lastYIndex;
     private int maxHealth;
     private int currentHealth;
     private int damage;
@@ -38,16 +42,16 @@ public abstract class Creature {
     public void setName(String name) {
         this.name = name;
     }
-    public int getxIndex() {
+    public int getXIndex() {
         return xIndex;
     }
-    public void setxIndex(int xIndex) {
+    public void setXIndex(int xIndex) {
         this.xIndex = xIndex;
     }
-    public int getyIndex() {
+    public int getYIndex() {
         return yIndex;
     }
-    public void setyIndex(int yIndex) {
+    public void setYIndex(int yIndex) {
         this.yIndex = yIndex;
     }
     public int getMaxHealth() {
@@ -61,23 +65,49 @@ public abstract class Creature {
     }
     public void setCurrentHealth(int currentHealth) {
         this.currentHealth = currentHealth;
+        if (this.currentHealth < 0){
+            this.currentHealth = 0;
+        }
     }
     public int getDamage() {
-        return damage;
+        SecureRandom rand = new SecureRandom();
+
+        double doubleDamage = (double) this.damage;
+        double randomValue = rand.nextDouble()/2; // gets a number from 0 to 0.50
+        randomValue -= 0.25; // to put it from -0.25 to +0.25
+        doubleDamage *= (1 + randomValue); // times: 0.75 to 1.25
+
+        return (int)doubleDamage; // box to int, might lose some values but it's fine
     }
     public void setDamage(int damage) {
         this.damage = damage;
+    }
+
+    public Room getOldRoom() { // todo check sequence if this works
+        return Game.map.getRoom(this.lastXIndex, this.lastYIndex);
     }
 
     public void setRoomCurrentlyInside(Room room) {
         // Take old room and remove this creature from there.
         Game.map.getRoom(this.xIndex, this.yIndex).getCreaturesList().remove(this);
 
-        this.setxIndex(room.getxIndex());
-        this.setyIndex(room.getyIndex());
+        this.lastXIndex = this.xIndex;
+        this.lastYIndex = this.yIndex;
+
+        this.xIndex = (room.getXIndex());
+        this.yIndex = (room.getYIndex());
 
         // Add this creature to the new room.
         room.getCreaturesList().add(this);
+    }
+
+    public void heal(int healValue){
+        this.currentHealth += healValue;
+        if (this.currentHealth > this.maxHealth){
+            this.currentHealth = this.maxHealth;
+        }
+
+        System.out.println("Current HP/Max HP - " + this.currentHealth + "/" + this.maxHealth);
     }
 
     @Override

@@ -7,25 +7,23 @@
 package GamePackage.CreaturesStuff;
 
 import GamePackage.ItemsStuff.Item;
+import GamePackage.ItemsStuff.Loot;
 
 import java.util.ArrayList;
 
 public class Hero extends Creature {
     // Field variables
     private HeroClass heroClass;
-    private boolean isBoy;
-    private int currentHealth;
     private ArrayList<Item> inventory;
-    // TODO add backpack
+    private int score;
     // TODO add keys
 
     // Constructors
-    public Hero(String name, int xIndex, int yIndex, int maxHealth, int damage, HeroClass heroClass, boolean isBoy, int currentHealth) {
+    public Hero(String name, int xIndex, int yIndex, int maxHealth, int damage, HeroClass heroClass) {
         super(name, xIndex, yIndex, maxHealth, damage);
-        this.currentHealth = currentHealth;
         this.heroClass = heroClass;
-        this.isBoy = isBoy;
         inventory = new ArrayList<>();
+        score = 0;
     }
 
 
@@ -36,25 +34,20 @@ public class Hero extends Creature {
     public HeroClass getHeroClass() {
         return heroClass;
     }
-    public boolean isBoy() {
-        return isBoy;
-    }
 
-    public ArrayList getInventory() {
+    public ArrayList<Item> getInventory() {
         return inventory;
     }
 
-    public void setInventory(ArrayList inventory) {
+    public void setInventory(ArrayList<Item> inventory) {
         this.inventory = inventory;
     }
 
-    @Override
-    public int getCurrentHealth() {
-        return currentHealth;
+    public int getScore() {
+        return score;
     }
 
-    @Override
-    public void setCurrentHealth(int currentHealth) {
-        this.currentHealth = currentHealth;
+    public void pickupLoot(Loot loot){
+        this.score += loot.getWorthInCoins();
     }
 }

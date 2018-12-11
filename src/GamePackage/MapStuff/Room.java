@@ -33,16 +33,16 @@ public class Room {
     public void setCreaturesList(ArrayList<Creature> creaturesList) {
         this.creaturesList = creaturesList;
     }
-    public int getxIndex() {
+    public int getXIndex() {
         return xIndex;
     }
-    public void setxIndex(int xIndex) {
+    public void setXIndex(int xIndex) {
         this.xIndex = xIndex;
     }
-    public int getyIndex() {
+    public int getYIndex() {
         return yIndex;
     }
-    public void setyIndex(int yIndex) {
+    public void setYIndex(int yIndex) {
         this.yIndex = yIndex;
     }
     public boolean isExplored() {
