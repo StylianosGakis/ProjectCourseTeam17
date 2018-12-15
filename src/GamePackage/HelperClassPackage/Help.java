@@ -141,6 +141,9 @@ public final class Help {
         }
     }
 
+    /**
+     * Have 3 separate private methods as I don't know how to send a Class as a parameter
+     */
     private static void changeSubMenuKeyBindings() {
         System.out.println("Which key-bind do you want to change");
         printSubMenuKeyBindings();
@@ -174,15 +177,24 @@ public final class Help {
         }
     }
 
+    /**
+     * Pseudo-clear screen that simply prints a lot of line brakes since we have no clear screen function in cmd
+     */
     public static void clearScreen() {
-        for (int i = 0; i < 10; i++) {
-            System.out.println("\n\n\n\n\n\n\n\n\n\n");
+        for (int i = 0; i < 5; i++) {
+            System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"); // 20 line brakes
         }
     }
+
+    /**
+     * A method to call to simply make the program stall for milliseconds duration
+     *
+     * @param milliseconds how many milliseconds the Thread should sleep
+     */
     public static void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
-        } catch (InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
     }

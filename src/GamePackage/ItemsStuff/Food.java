@@ -1,9 +1,5 @@
 package GamePackage.ItemsStuff;
 
-/**
- * TODO maybe add some temporary strength given for a number of rounds after eating this food, maybe do that for
- * potions instead as another "Item".
- */
 public class Food extends Item {
     // Field variables
     private int healthRestored;

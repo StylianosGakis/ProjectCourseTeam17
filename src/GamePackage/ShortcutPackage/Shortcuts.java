@@ -10,9 +10,6 @@ import java.util.*;
 
 public abstract class Shortcuts {
 
-    // TODO after implementing save, see if keybinds are saved. If not try and save obj of the classes in Main.
-    // TODO BIG take keybinds from FILE and import as starting keybinds, also save to file the keybinds
-
     /**
      * Use to build a String that shows all the menu choices of that HashMap
      */

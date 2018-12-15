@@ -18,7 +18,7 @@ import java.util.List;
  * A final method cannot be overridden
  * <p>
  * We don't want to create objects of it nor do we want any other class to inherit it etc. We are going to use this
- * class just to save all of our shortcuts //TODO enable the user to modify these shortcuts
+ * class just to save all of our shortcuts
  */
 public final class MapShortcuts extends Shortcuts {
     public final static String LEFT = "Move left";

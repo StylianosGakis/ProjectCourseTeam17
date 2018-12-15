@@ -17,6 +17,7 @@ public class MainMenuShortcuts extends Shortcuts {
     public final static String OPTIONS = "Game options";
     public final static String MAP = "Show map";
     public final static String FOOD = "Show foods";
+    public final static String END_GAME = "Finish the game";
 
 
     private static HashMap<String, Character> map = new LinkedHashMap<>() {{
@@ -26,6 +27,7 @@ public class MainMenuShortcuts extends Shortcuts {
         put(OPTIONS, '4');
         put(MAP, '5');
         put(FOOD, '6');
+        put(END_GAME, '7');
     }};
 
     // Private constructor to prevent from creating useless objects of this class.
@@ -36,19 +38,19 @@ public class MainMenuShortcuts extends Shortcuts {
         return getKeyFromValue(value, map);
     }
 
-    public static String getAllKeyBinds(){
+    public static String getAllKeyBinds() {
         return getAllKeyBinds(map);
     }
 
-    public static List<Character> getAllHashMapValues(){
+    public static List<Character> getAllHashMapValues() {
         return getAllHashMapValues(map);
     }
 
-    public static String getAllMenuChoices(){
+    public static String getAllMenuChoices() {
         return getAllMenuChoices(map);
     }
 
-    public static String getMenuChoice(String key){
+    public static String getMenuChoice(String key) {
         return getMenuChoice(key, map);
     }
 
