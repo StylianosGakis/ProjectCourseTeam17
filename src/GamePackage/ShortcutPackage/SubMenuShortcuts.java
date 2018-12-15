@@ -37,19 +37,19 @@ public class SubMenuShortcuts extends Shortcuts {
         return getKeyFromValue(value, map);
     }
 
-    public static String getAllKeyBinds(){
+    public static String getAllKeyBinds() {
         return getAllKeyBinds(map);
     }
 
-    public static List<Character> getAllHashMapValues(){
+    public static List<Character> getAllHashMapValues() {
         return getAllHashMapValues(map);
     }
 
-    public static String getAllMenuChoices(){
+    public static String getAllMenuChoices() {
         return getAllMenuChoices(map);
     }
 
-    public static String getMenuChoice(String key){
+    public static String getMenuChoice(String key) {
         return getMenuChoice(key, map);
     }
 

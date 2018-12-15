@@ -33,13 +33,14 @@ public class Game {
 
     public static Hero hero;
     public static Map map;
+    private volatile static Thread musicThread = new Thread();
     private static Scanner in = new Scanner(System.in);
 
     // Field variables
-    public final int fightDelay = 100;
-    private String yesPattern = "^[Yy]{1}((es){0,1}|(ep){0,1}|(ea){0,1}[hp]{0,1})$"; //todo a No Pattern
+    private final int fightDelay = 100;
     // Matches currently Y,y,Yes,yes,Yep,yep,Yea,yea,Yeah,yeah,Yeap,yeap
     //if curious: https://regex101.com/r/AAw9Ry/1v
+    private String yesPattern = "^[Yy]{1}((es){0,1}|(ep){0,1}|(ea){0,1}[hp]{0,1})$"; //todo a No Pattern
     private SecureRandom rand = new SecureRandom();
     private int turnCounter = 1;
 
@@ -60,10 +61,32 @@ public class Game {
         return true;
     }
 
-    public boolean checkDeath(Creature creature) {
+    /**
+     * Plays one of the tracks given as a parameter randomly.
+     * If there is a track already playing that has not been interrupted it doesn't play over the last track
+     * If it is forced however it will force stop the previous track and immediately start with the new track
+     *
+     * @param force     force stops any previous musics and forces the new music to start instead
+     * @param musicPath should be given in the format of: "fileName.wav" and always be inside folder "MusicFiles"
+     */
+    static void playMusic(boolean force, String... musicPath) {
+        if (force) {
+            if (musicThread != null) {
+                musicThread.interrupt();
+            }
+        }
+        SecureRandom rand = new SecureRandom();
+        if (!musicThread.isAlive() || musicThread.isInterrupted() || force) {
+            int numberOfSongs = musicPath.length;
+            int randomChoice = rand.nextInt(numberOfSongs); // pick a random song
+            musicThread = new Thread(new MusicPlayer("MusicFiles/" + musicPath[randomChoice]));
+            musicThread.start();
+        }
+    }
+    private boolean checkDeath(Creature creature) {
         if (hero.getCurrentHealth() <= 0) {
             System.out.println("\nAlas! " + hero.getName() + " died! The monster wins :( (╯°□°）╯︵ ┻━┻");
-            heroDied();
+            endGame(hero.getCurrentHealth());
             return true;
         } else if (creature.getCurrentHealth() <= 0) {
             System.out.println("Amazing! " + hero.getName() + " won!");
@@ -81,10 +104,10 @@ public class Game {
         setupGame();
         runGame();
     }
+
     /**
      * All the initial stuff that has to be done in order for the game to be setup well, like initializing the map etc.
      */
-
     private void setupGame() {
         createMap();
         createHero();
@@ -106,8 +129,8 @@ public class Game {
                 }
                 exit = true;
             } catch (InputMismatchException e) {
-                System.out.println("Please enter a number");
-                in.nextLine(); // To catch the hanging "Enter" from the user
+                in.nextLine();
+                System.out.print("Wrong input, please enter a number!\n>> ");
             }
         }
         System.out.println("Map size picked: " + mapSizeChoice);
@@ -147,6 +170,7 @@ public class Game {
         map.getRoom(hero).getCreaturesList().add(hero);
     }
 
+    // Other methods
     /**
      * Will be called inside setupGame to place monsters in the correct positions
      */
@@ -188,7 +212,6 @@ public class Game {
         }
     }
 
-    // Other methods
     /**
      * Will be called inside setupGame to place items in the correct positions
      */
@@ -232,43 +255,39 @@ public class Game {
     }
 
     /**
-     * @param musicPath should be given in the format of: "MusicFiles/fileName.wav"
-     */
-    private void playMusic(String musicPath) {
-        Thread myThread = new Thread(new MusicPlayer(musicPath));
-        myThread.start();
-    }
-
-    /**
      * The infinite loop that our already setup game will work with.
      */
     private void runGame() {
         while (true) {
             System.out.println("Press any key to start turn: " + turnCounter);
-            playMusic("MusicFiles/smb_world_clear.wav"); // todo move this to appropriate position?
+            playMusic(false, "ambientStandard.wav", "waterStandard.wav");
             in.nextLine();
             Help.clearScreen();
             System.out.println("Start of turn: " + turnCounter + "\n");
 
             map.printMap();
+            if (map.getRoom(hero).isExit()) {
+                System.out.println("\nYou have found the exit!\n" +
+                        "You can exit the game and keep your high score");
+            }
 
             boolean inMenu = true;
             while (inMenu) {
                 Character menuChoice = MenuPrints.mainMenu();
                 inMenu = handleMenuChoice(menuChoice);
             }
-            //TODO rest of turn. Here monsters move etc. then the loop goes back and we are on next turn
             checkForFight();
 
+            //TODO rest of turn. Here monsters move etc. then the loop goes back and we are on next turn
             turnCounter++; // increase turn number at the end of loop before we go to the next turn
         }
     }
 
-    private boolean checkForFight() {
+    private void checkForFight() {
         Room currentRoom = map.getRoom(hero);
         Monster monster = null;
         if (currentRoom.getCreaturesList().size() != 2) { // 2 means the hero and 1 more thing which must be monster
-            return false;
+            return;
         } else {
             for (Creature creature : currentRoom.getCreaturesList()) { // loop through the array and get the monster
                 if (creature instanceof Monster) {
@@ -279,11 +298,10 @@ public class Game {
         if (monster != null) {
             fight(monster);
         }
-        return true;
     }
 
-    public void fight(Monster monster) {
-        //TODO enter fighting menu
+    private void fight(Monster monster) {
+        playMusic(true, "fightMusic.wav");
         System.out.println("\nAlas! " + hero.getName() + " has encountered a bloodthirsty enemy. " +
                 "Now it is time to prove your worth and defeat it!");//todo random encounter quotes
 
@@ -302,6 +320,7 @@ public class Game {
             }
         }
         System.out.println("The fight is over");
+        playMusic(true, "ambientStandard.wav", "waterStandard.wav");
     }
 
     /**
@@ -383,10 +402,12 @@ public class Game {
             if (hasItem) {
                 System.out.print("Do you want to eat one of the foods?\nYes/No\n>> ");
                 String answer = in.nextLine();
-                if (answer.matches(yesPattern)){
+                if (answer.matches(yesPattern)) {
                     consumeFood();
                 }
             }
+        } else if (menuChoice == MainMenuShortcuts.getValue(MainMenuShortcuts.END_GAME)) {
+            endGame(hero.getCurrentHealth());
         }
         while (inSubMenu) {
             Character subChoice = MenuPrints.subMenu();
@@ -401,7 +422,7 @@ public class Game {
      */
     private boolean handleSubMenu(int subChoice) {
         if (subChoice == SubMenuShortcuts.getValue(SubMenuShortcuts.INSTRUCTIONS)) { // show game instructions
-
+            //TODO Show instructions on the game
         } else if (subChoice == SubMenuShortcuts.getValue(SubMenuShortcuts.SAVE_GAME)) { // save game
             //TODO add save function
         } else if (subChoice == SubMenuShortcuts.getValue(SubMenuShortcuts.LOAD_GAME)) { // load game
@@ -422,25 +443,20 @@ public class Game {
      * @return returns whether the movement was done successfully.
      */
     private boolean handleMovement() {
-        boolean inLoop = true;
-        while (inLoop) {
-            //Art.printMap();
-            map.printMap();
-            System.out.print(MapShortcuts.getAllMenuChoices());
-            Character direction = Help.readChar();
-            if (!MapShortcuts.getAllHashMapValues().contains(direction)) {
-                System.out.println("Your hand must have slipped, maybe you should change your key-bindings?");
-                return false;
-            } else if (direction == MapShortcuts.getValue(MapShortcuts.CANCEL)) {
-                System.out.println("Canceling movement");
-                return false; // didn't use a turn.
-            } else {
-                map.moveCreature(hero, direction);
-                inLoop = false; // if we move properly exit
-                return true;
-            }
+        //Art.printMap();
+        map.printMap();
+        System.out.print(MapShortcuts.getAllMenuChoices());
+        Character direction = Help.readChar();
+        if (!MapShortcuts.getAllHashMapValues().contains(direction)) {
+            System.out.println("Your hand must have slipped, maybe you should change your key-bindings?");
+            return false;
+        } else if (direction == MapShortcuts.getValue(MapShortcuts.CANCEL)) {
+            System.out.println("Canceling movement");
+            return false; // didn't use a turn.
+        } else {
+            map.moveCreature(hero, direction);
+            return true;
         }
-        return false;
     }
 
     /**
@@ -482,6 +498,7 @@ public class Game {
         while (hasItems) {
             try {
                 int itemChoice = in.nextInt(); // we print the items from 1 not from 0 so all must be adjusted later
+                in.nextLine();
                 if ((itemChoice < 1) || (itemChoice > hero.getInventory().size())) {
                     System.out.println("There is no such item, enter a proper number\n>> ");
                 } else {
@@ -489,11 +506,9 @@ public class Game {
                     hero.getInventory().remove(itemChoice - 1);
                     hasItems = false;
                 }
-            } catch (Exception e) {
-                in.nextLine(); //todo check if this input works
+            } catch (InputMismatchException e) {
+                in.nextLine();
                 System.out.print("Wrong input, please enter a number!\n>> ");
-            } finally {
-                in.nextLine(); // to catch the hanging enter
             }
         }
     }
@@ -511,6 +526,7 @@ public class Game {
         while (hasItems) {
             try {
                 int itemChoice = in.nextInt(); // we print the items from 1 not from 0 so all must be adjusted later
+                in.nextLine();
                 if (itemChoice == 0) {
                     System.out.println("Canceling using item");
                     return false;
@@ -525,11 +541,9 @@ public class Game {
                     }
                     hasItems = false;
                 }
-            } catch (Exception e) {
-                in.nextLine(); //todo check if this input works
+            } catch (InputMismatchException e) {
+                in.nextLine();
                 System.out.print("Wrong input, please enter a number!\n>> ");
-            } finally {
-                in.nextLine(); // to catch the hanging enter
             }
         }
         return false;
@@ -543,7 +557,7 @@ public class Game {
 
     private void pickupItem() {
         boolean hasItems = showItemsInRoom();
-        Room currentRoom = null;
+        Room currentRoom;
         ArrayList<Item> roomItems = null;
 
         if (hasItems) {
@@ -554,15 +568,16 @@ public class Game {
         while (hasItems) {
             try {
                 int itemChoice = in.nextInt(); // we print the items from 1 not from 0 so all must be adjusted later
+                in.nextLine();
                 if (itemChoice == 0) {
                     return;
                 } else if ((itemChoice < 1) || itemChoice > roomItems.size()) {
-                    System.out.println("There is no such item, enter a proper number\n>> ");
+                    System.out.print("There is no such item, enter a proper number\n>> ");
                 } else {
                     Item itemPickedUp = roomItems.get(itemChoice - 1); // - 1 since we print them starting from 1.
                     if (itemPickedUp instanceof Loot) {
                         hero.pickupLoot((Loot) itemPickedUp);
-                        System.out.println(itemPickedUp + " has added " + ((Loot) itemPickedUp).getWorthInCoins() +
+                        System.out.println(itemPickedUp + "has added " + ((Loot) itemPickedUp).getWorthInCoins() +
                                 " value to your high score. Your current score is now: " + hero.getScore());
                     } else {
                         hero.getInventory().add(itemPickedUp);
@@ -572,10 +587,8 @@ public class Game {
                     hasItems = false;
                 }
             } catch (InputMismatchException e) {
-                in.nextLine(); //todo check if this input works
-                System.out.print("Wrong input, please enter a number!\n>> ");
-            } finally {
                 in.nextLine();
+                System.out.print("Wrong input, please enter a number!\n>> ");
             }
         }
     }
@@ -588,12 +601,18 @@ public class Game {
         }
     }
 
-    private void heroDied() {
-        System.out.println(hero.getName() + " has died.");
-        System.out.println("Your high score was");
+    private void endGame(int heroHealth) {
+        if (heroHealth <= 0) {
+            System.out.println(hero.getName() + " has died.");
+            System.out.print("Your high would be ");
+        } else {
+            System.out.println(hero.getName() + " has won the game!");
+            System.out.print("Your high score was ");
+        }
         System.out.println(hero.getScore());
         System.out.print("Press anything to continue ");
         in.nextLine();
+        musicThread.interrupt();
         Main main = new Main();
         main.runMyProgram();
     }

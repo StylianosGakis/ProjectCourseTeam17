@@ -9,7 +9,8 @@ public class Room {
     // Field variables
     private ArrayList<Item> itemsList = new ArrayList<>();
     private ArrayList<Creature> creaturesList = new ArrayList<>();
-    private boolean isExplored;
+    private boolean isExplored = false;
+    private boolean isExit = false;
     private int xIndex;
     private int yIndex;
     // Constructors
@@ -51,7 +52,12 @@ public class Room {
     public void setExplored(boolean explored) {
         isExplored = explored;
     }
-
+    public boolean isExit() {
+        return isExit;
+    }
+    public void setExit(boolean exit) {
+        isExit = exit;
+    }
     @Override
     public String toString() {
         return "Room{" +

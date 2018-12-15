@@ -10,6 +10,8 @@ import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 
+// Credits for music go to https://tabletopaudio.com/
+
 public class MusicPlayer implements Runnable {
 
     private String musicFilePath;
@@ -42,8 +44,7 @@ public class MusicPlayer implements Runnable {
             // open audioInputStream to the clip
             clip.open(audioInputStream);
 
-            // TODO maybe run and interrupt it when we want to interrupt it with clip.loop(Clip.LOOP_CONTINUOUSLY);
-            clip.loop(0);
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
 
             // Start the music
             clip.start();
@@ -52,20 +53,18 @@ public class MusicPlayer implements Runnable {
             clip.getMicrosecondLength() / 1000 is used to make the Thread work for specifically as much as the
             music file is big.
              */
-            Thread.sleep(clip.getMicrosecondLength() / 1000);
+            Thread.sleep(Integer.MAX_VALUE);
 
         } catch (IOException ioe) {
-            ioe.printStackTrace();
-        } catch (UnsupportedAudioFileException uafe) {
-            uafe.printStackTrace();
-        } catch (LineUnavailableException lue) {
-            lue.printStackTrace();
+            //ioe.printStackTrace();
         } catch (InterruptedException ie) {
-            ie.printStackTrace();
-        } finally {
-            if (clip != null) { // If it did in fact get initialized.
-                clip.stop();
-            }
+            // If it did in fact get initialized.
+            clip.stop();
+            //ie.printStackTrace();
+        } catch (UnsupportedAudioFileException e) {
+            //e.printStackTrace();
+        } catch (LineUnavailableException e) {
+            //e.printStackTrace();
         }
     }
 }

@@ -28,7 +28,6 @@ public class Hero extends Creature {
 
 
     // Methods
-    // TODO add method for using one of the items, possibly different methods for items/food or even one will see.
 
     // Getters and setters
     public HeroClass getHeroClass() {
@@ -47,7 +46,7 @@ public class Hero extends Creature {
         return score;
     }
 
-    public void pickupLoot(Loot loot){
+    public void pickupLoot(Loot loot) {
         this.score += loot.getWorthInCoins();
     }
 }

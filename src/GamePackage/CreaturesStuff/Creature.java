@@ -65,7 +65,7 @@ public abstract class Creature {
     }
     public void setCurrentHealth(int currentHealth) {
         this.currentHealth = currentHealth;
-        if (this.currentHealth < 0){
+        if (this.currentHealth < 0) {
             this.currentHealth = 0;
         }
     }
@@ -73,17 +73,18 @@ public abstract class Creature {
         SecureRandom rand = new SecureRandom();
 
         double doubleDamage = (double) this.damage;
-        double randomValue = rand.nextDouble()/2; // gets a number from 0 to 0.50
+        //todo doubleDamage += this.weapon.getDamage();
+        double randomValue = rand.nextDouble() / 2; // gets a number from 0 to 0.50
         randomValue -= 0.25; // to put it from -0.25 to +0.25
         doubleDamage *= (1 + randomValue); // times: 0.75 to 1.25
 
-        return (int)doubleDamage; // box to int, might lose some values but it's fine
+        return (int) doubleDamage; // box to int, might lose some values but it's fine
     }
     public void setDamage(int damage) {
         this.damage = damage;
     }
 
-    public Room getOldRoom() { // todo check sequence if this works
+    public Room getOldRoom() {
         return Game.map.getRoom(this.lastXIndex, this.lastYIndex);
     }
 
@@ -101,9 +102,9 @@ public abstract class Creature {
         room.getCreaturesList().add(this);
     }
 
-    public void heal(int healValue){
+    public void heal(int healValue) {
         this.currentHealth += healValue;
-        if (this.currentHealth > this.maxHealth){
+        if (this.currentHealth > this.maxHealth) {
             this.currentHealth = this.maxHealth;
         }
 

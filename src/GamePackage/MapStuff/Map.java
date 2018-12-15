@@ -7,6 +7,7 @@
 package GamePackage.MapStuff;
 
 import GamePackage.CreaturesStuff.Creature;
+import GamePackage.CreaturesStuff.Hero;
 import GamePackage.Game;
 import GamePackage.ShortcutPackage.MapShortcuts;
 
@@ -23,6 +24,32 @@ public class Map {
         this.mapSize = mapSize;
         createMap();
         insertDoors();
+        pickExitRoom();
+    }
+
+    /**
+     * Picks a room from the bottom right part of the map to be an exit so for example if we have map of
+     * <p>
+     * *   *   *   *
+     * *   *   *   *
+     * *   *   *   *
+     * *   *   *   *
+     * <p>
+     * The only rooms that are able to be picked as exit are these, and it's picked randomly
+     * <p>
+     * *   *   *   *
+     * *   *   *   *
+     * *   *   E   E
+     * *   *   E   E
+     */
+    private void pickExitRoom() {
+        SecureRandom rand = new SecureRandom();
+        int halfSize = this.mapSize / 2;
+        // Random within range upper, lower is: rand.nextInt(upper - lower) + lower
+        Room chosenRoom = this.getRoom(rand.nextInt(mapSize - halfSize) + halfSize,
+                rand.nextInt(mapSize - halfSize) + halfSize);
+        chosenRoom.setExit(true); // set it as isExit
+        System.out.println("The exit room has been placed.");
     }
 
     private void createMap() {
@@ -38,7 +65,7 @@ public class Map {
         // doors = ( size * size - size ) * 2 for example if size is 4, we have 24 doors, 12 vertical and 12 horizontal
         // Information about Door[][] arrays inside Door class
 
-        // Initialize all as unlocked and no color for now TODO add randomness to keep some entrances closed? (99% NO)
+        // Initialize all as unlocked and no color for now
         // Vertical doors
         verticalDoorArray = new Door[mapSize][mapSize - 1]; // Create the vertical door array
         for (int i = 0; i < verticalDoorArray.length; i++) {
@@ -64,14 +91,18 @@ public class Map {
     public boolean moveCreature(Creature creature, Character direction) {
         Door door = getDoor(getRoom(creature), direction);
         if (door == null) {
-            System.out.println("There is no door in that direction!");
+            if (creature instanceof Hero) {
+                System.out.println("There is no door in that direction!");
+            }
             return false;
         } else if (door.isLocked()) { // TODO unlocking option if we do have the key, prob only work for hero object.
-            System.out.println("That door is locked, you will need the " + door.getDoorColor() + " key to unlock!");
+            if (creature instanceof Hero) {
+                System.out.println("That door is locked, you will need the " + door.getDoorColor() + " key to unlock!");
+            }
             return false;
         } else { // Door exists, and is unlocked. Move there.
             Room currentRoom = getRoom(creature);
-            if (direction == (MapShortcuts.getValue(MapShortcuts.LEFT))) { //TODO  also make it check for lowercase vice-versa
+            if (direction == (MapShortcuts.getValue(MapShortcuts.LEFT))) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getXIndex() - 1, currentRoom.getYIndex()));
             } else if (direction == MapShortcuts.getValue(MapShortcuts.UP)) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() - 1));
@@ -80,7 +111,9 @@ public class Map {
             } else if (direction == MapShortcuts.getValue(MapShortcuts.DOWN)) {
                 creature.setRoomCurrentlyInside(getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() + 1));
             }
-            getRoom(creature).setExplored(true);
+            if (creature instanceof Hero) {
+                getRoom(creature).setExplored(true);
+            }
             return true;
         }
     }
@@ -131,11 +164,13 @@ public class Map {
     public void printMap() {
         int heroY = getRoom(Game.hero).getYIndex();
         int heroX = getRoom(Game.hero).getXIndex();
-        System.out.print("(? = unexplored, I = Item, * = explored, H = hero, M = Monster)\n");
+        System.out.print("(? = unexplored, * = explored, H = hero, E = Exit, I = Item, M = Monster)\n");
         for (int y = 0; y < mapSize; y++) {
             for (int x = 0; x < mapSize; x++) {
                 if (y == heroY && x == heroX) {
                     System.out.print("H ");
+                } else if (getRoom(x, y).isExit()) {
+                    System.out.print("E "); // EXIT SHOW just for now.//Todo not show this normally.
                 } else if (!getRoom(x, y).getCreaturesList().isEmpty()) {
                     System.out.print("M "); // MONSTER SHOW just for now.//Todo not show this normally.
                 } else if (!getRoom(x, y).getItemsList().isEmpty()) {
