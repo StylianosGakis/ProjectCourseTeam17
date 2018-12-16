@@ -13,7 +13,6 @@ import java.util.List;
 public class SubMenuShortcuts extends Shortcuts {
     public final static String INSTRUCTIONS = "Show game instructions";
     public final static String SAVE_GAME = "Save game";
-    public final static String LOAD_GAME = "Load game";
     public final static String SHOW_KEY_BINDINGS = "Show key bindings";
     public final static String CHANGE_KEY_BINDINGS = "Change key bindings";
     public final static String QUIT_GAME = "Quit game";
@@ -22,11 +21,10 @@ public class SubMenuShortcuts extends Shortcuts {
     private static HashMap<String, Character> map = new LinkedHashMap<>() {{
         put(INSTRUCTIONS, '1');
         put(SAVE_GAME, '2');
-        put(LOAD_GAME, '3');
-        put(SHOW_KEY_BINDINGS, '4');
-        put(CHANGE_KEY_BINDINGS, '5');
-        put(QUIT_GAME, '6');
-        put(BACK_TO_MAIN_MENU, '7');
+        put(SHOW_KEY_BINDINGS, '3');
+        put(CHANGE_KEY_BINDINGS, '4');
+        put(QUIT_GAME, '5');
+        put(BACK_TO_MAIN_MENU, '6');
     }};
 
     // Private constructor to prevent from creating useless objects of this class.

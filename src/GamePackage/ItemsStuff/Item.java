@@ -6,7 +6,9 @@
 
 package GamePackage.ItemsStuff;
 
-public abstract class Item {
+import java.io.Serializable;
+
+public abstract class Item implements Serializable {
     // Field variables
     private String name;
 

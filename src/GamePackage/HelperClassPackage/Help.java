@@ -6,11 +6,13 @@
 
 package GamePackage.HelperClassPackage;
 
+import GamePackage.Game;
 import GamePackage.ShortcutPackage.FightShortcuts;
 import GamePackage.ShortcutPackage.MainMenuShortcuts;
 import GamePackage.ShortcutPackage.MapShortcuts;
 import GamePackage.ShortcutPackage.SubMenuShortcuts;
 
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -74,6 +76,27 @@ public final class Help {
             choice = readChar();
         }
         return choice;
+    }
+
+    public static void saveGame(Game game) {
+        File file = new File("src/SaveGames/Save_1.txt");
+        try (ObjectOutputStream oOut = new ObjectOutputStream(new FileOutputStream(file))) {
+            oOut.writeObject(game);
+            System.out.println("\nGame Saved!\n");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Game loadGame() {
+        File file = new File("src/SaveGames/Save_1.txt");
+        Game game = null;
+        try (ObjectInputStream oIn = new ObjectInputStream(new FileInputStream(file))) {
+            game = (Game) oIn.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return game;
     }
 
     /**

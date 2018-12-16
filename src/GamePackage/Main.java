@@ -14,6 +14,11 @@ public class Main {
         Character choice = printMainMenu();
         if (choice == '1') {
             game.startGame();
+        } else if (choice == '2'){
+            //TODO make a menu from a list of loaded games to show and pick from, also show some relevant information
+            //  from each loaded game
+            Game loadedGame = Help.loadGame();
+            loadedGame.runGame();
         } else {
             System.exit(0);
         }
@@ -27,8 +32,9 @@ public class Main {
                         "\nAnd remember:" +
                         "\nThe night is here and it is full of terrors." +
                         "\nAre you ready to enter the dungeon of Maragoth?\n");
-        System.out.println("\n1. BRING IT ON! (Start game)\n" +
-                "2. Nope. (Quit game)\n");
+        System.out.print("\n1. BRING IT ON! (Start game)\n" +
+                "2. Load game\n" +
+                "3. Nope. (Quit game)\n");
         return Help.readChar();
     }
 }
