@@ -10,9 +10,9 @@ public final class MenuPrints {
     private MenuPrints() {
     }
 
-    public static Character mainMenu() {
+    public static Character mainMenu(Game game) {
         System.out.println("\n--- Main menu ---");
-        if (Game.map.getRoom(Game.hero).isExit()) { // Just print all the options if we are at the room that ends game
+        if (game.map.getRoom(game.hero).isExit()) { // Just print all the options if we are at the room that ends game
             System.out.print(MainMenuShortcuts.getAllMenuChoices());
             return Help.readCharUntilOneMatch(MainMenuShortcuts.getAllHashMapValues());
         } else { // Do not print the option that includes the exit of the game if not in the final room
