@@ -1,5 +1,7 @@
 package GamePackage.MapStuff;
 
+import java.io.Serializable;
+
 /**
  * All of this is possibly wrong, might change later //TODO fix this documentation
  * <p>
@@ -53,7 +55,7 @@ package GamePackage.MapStuff;
  * If we want 🡸 door of a room[x][y], we do verticalDoor[x-1][y]
  * If we want 🡺 door of a room[x][y], we do verticalDoor[x][y]
  */
-public class Door {
+public class Door implements Serializable {
     // Field variables
     private boolean locked;
 

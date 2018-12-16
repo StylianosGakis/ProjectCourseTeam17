@@ -23,25 +23,26 @@ import GamePackage.ShortcutPackage.MainMenuShortcuts;
 import GamePackage.ShortcutPackage.MapShortcuts;
 import GamePackage.ShortcutPackage.SubMenuShortcuts;
 
+import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-public class Game {
+public class Game implements Serializable {
 
     public Hero hero;
     public Map map;
-    private volatile Thread musicThread = new Thread();
-    private Scanner in = new Scanner(System.in);
+    private static volatile Thread musicThread = new Thread();
+    private static Scanner in = new Scanner(System.in);
 
     // Field variables
     private final int fightDelay = 100;
     // Matches currently Y,y,Yes,yes,Yep,yep,Yea,yea,Yeah,yeah,Yeap,yeap
     //if curious: https://regex101.com/r/AAw9Ry/1v
     private String yesPattern = "^[Yy]{1}((es){0,1}|(ep){0,1}|(ea){0,1}[hp]{0,1})$"; //todo a No Pattern
-    private SecureRandom rand = new SecureRandom();
+    private static SecureRandom rand = new SecureRandom();
     private int turnCounter = 1;
 
     // Setup stuff
@@ -257,7 +258,7 @@ public class Game {
     /**
      * The infinite loop that our already setup game will work with.
      */
-    private void runGame() {
+    void runGame() {
         while (true) {
             System.out.println("Press any key to start turn: " + turnCounter);
             playMusic(false, "ambientStandard.wav", "waterStandard.wav");
@@ -424,9 +425,7 @@ public class Game {
         if (subChoice == SubMenuShortcuts.getValue(SubMenuShortcuts.INSTRUCTIONS)) { // show game instructions
             //TODO Show instructions on the game
         } else if (subChoice == SubMenuShortcuts.getValue(SubMenuShortcuts.SAVE_GAME)) { // save game
-            //TODO add save function
-        } else if (subChoice == SubMenuShortcuts.getValue(SubMenuShortcuts.LOAD_GAME)) { // load game
-            //TODO add load function
+            Help.saveGame(this);
         } else if (subChoice == SubMenuShortcuts.getValue(SubMenuShortcuts.SHOW_KEY_BINDINGS)) { // show keyboard commands
             Help.printAllKeyBindings();
         } else if (subChoice == SubMenuShortcuts.getValue(SubMenuShortcuts.CHANGE_KEY_BINDINGS)) { // change keyboard commands
@@ -597,6 +596,7 @@ public class Game {
         System.out.print("Are you sure? (Y)es/(N)o\nEnter your choice\n>> ");
         String exitChoice = in.nextLine();
         if (exitChoice.matches(yesPattern)) {
+            Help.saveGame(this);
             System.exit(0);
         }
     }

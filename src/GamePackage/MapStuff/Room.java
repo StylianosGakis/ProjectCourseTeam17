@@ -3,9 +3,10 @@ package GamePackage.MapStuff;
 import GamePackage.CreaturesStuff.Creature;
 import GamePackage.ItemsStuff.Item;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Room {
+public class Room implements Serializable {
     // Field variables
     private ArrayList<Item> itemsList = new ArrayList<>();
     private ArrayList<Creature> creaturesList = new ArrayList<>();

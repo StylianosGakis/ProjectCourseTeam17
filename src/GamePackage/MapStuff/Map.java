@@ -11,9 +11,10 @@ import GamePackage.CreaturesStuff.Hero;
 import GamePackage.Game;
 import GamePackage.ShortcutPackage.MapShortcuts;
 
+import java.io.Serializable;
 import java.security.SecureRandom;
 
-public class Map {
+public class Map implements Serializable {
     private int mapSize;
     private Room[][] mapArray;
     private Door[][] verticalDoorArray;

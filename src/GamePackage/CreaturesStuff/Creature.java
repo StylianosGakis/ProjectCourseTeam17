@@ -10,9 +10,10 @@ import GamePackage.Game;
 import GamePackage.MapStuff.Map;
 import GamePackage.MapStuff.Room;
 
+import java.io.Serializable;
 import java.security.SecureRandom;
 
-public abstract class Creature {
+public abstract class Creature implements Serializable {
     // Field variables
     private String name;
     private int xIndex;
