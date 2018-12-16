@@ -103,13 +103,13 @@ public class Map {
         } else { // Door exists, and is unlocked. Move there.
             Room currentRoom = getRoom(creature);
             if (direction == (MapShortcuts.getValue(MapShortcuts.LEFT))) {
-                creature.setRoomCurrentlyInside(getRoom(currentRoom.getXIndex() - 1, currentRoom.getYIndex()));
+                creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex() - 1, currentRoom.getYIndex()));
             } else if (direction == MapShortcuts.getValue(MapShortcuts.UP)) {
-                creature.setRoomCurrentlyInside(getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() - 1));
+                creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() - 1));
             } else if (direction == MapShortcuts.getValue(MapShortcuts.RIGHT)) {
-                creature.setRoomCurrentlyInside(getRoom(currentRoom.getXIndex() + 1, currentRoom.getYIndex()));
+                creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex() + 1, currentRoom.getYIndex()));
             } else if (direction == MapShortcuts.getValue(MapShortcuts.DOWN)) {
-                creature.setRoomCurrentlyInside(getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() + 1));
+                creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() + 1));
             }
             if (creature instanceof Hero) {
                 getRoom(creature).setExplored(true);
@@ -161,9 +161,9 @@ public class Map {
     /**
      * TODO Print the world as ASCII art
      */
-    public void printMap() {
-        int heroY = getRoom(Game.hero).getYIndex();
-        int heroX = getRoom(Game.hero).getXIndex();
+    public void printMap(Game game) {
+        int heroY = getRoom(game.hero).getYIndex();
+        int heroX = getRoom(game.hero).getXIndex();
         System.out.print("(? = unexplored, * = explored, H = hero, E = Exit, I = Item, M = Monster)\n");
         for (int y = 0; y < mapSize; y++) {
             for (int x = 0; x < mapSize; x++) {
@@ -184,7 +184,7 @@ public class Map {
             System.out.println();
         }
 
-        Game.showItemsInRoom();
+        game.showItemsInRoom();
     }
 
     /**

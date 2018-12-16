@@ -9,8 +9,8 @@ public class Main {
     }
 
     public void runMyProgram() {
-        Game.playMusic(true, "ambientStandard.wav");
         Game game = new Game();
+        game.playMusic(true, "ambientStandard.wav");
         Character choice = printMainMenu();
         if (choice == '1') {
             game.startGame();

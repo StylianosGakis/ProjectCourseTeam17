@@ -7,6 +7,7 @@
 package GamePackage.CreaturesStuff;
 
 import GamePackage.Game;
+import GamePackage.MapStuff.Map;
 import GamePackage.MapStuff.Room;
 
 import java.security.SecureRandom;
@@ -84,13 +85,13 @@ public abstract class Creature {
         this.damage = damage;
     }
 
-    public Room getOldRoom() {
-        return Game.map.getRoom(this.lastXIndex, this.lastYIndex);
+    public Room getOldRoom(Map map) {
+        return map.getRoom(this.lastXIndex, this.lastYIndex);
     }
 
-    public void setRoomCurrentlyInside(Room room) {
+    public void setRoomCurrentlyInside(Map map, Room room) {
         // Take old room and remove this creature from there.
-        Game.map.getRoom(this.xIndex, this.yIndex).getCreaturesList().remove(this);
+        map.getRoom(this.xIndex, this.yIndex).getCreaturesList().remove(this);
 
         this.lastXIndex = this.xIndex;
         this.lastYIndex = this.yIndex;

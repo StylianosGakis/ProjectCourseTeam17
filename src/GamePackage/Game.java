@@ -31,10 +31,10 @@ import java.util.Scanner;
 
 public class Game {
 
-    public static Hero hero;
-    public static Map map;
-    private volatile static Thread musicThread = new Thread();
-    private static Scanner in = new Scanner(System.in);
+    public Hero hero;
+    public Map map;
+    private volatile Thread musicThread = new Thread();
+    private Scanner in = new Scanner(System.in);
 
     // Field variables
     private final int fightDelay = 100;
@@ -45,8 +45,8 @@ public class Game {
     private int turnCounter = 1;
 
     // Setup stuff
-    public static boolean showItemsInRoom() {
-        Room currentRoom = map.getRoom(hero);
+    public boolean showItemsInRoom() {
+        Room currentRoom = map.getRoom(this.hero);
         ArrayList<Item> roomItems = currentRoom.getItemsList();
         System.out.println();
         if (roomItems.isEmpty()) {
@@ -69,7 +69,7 @@ public class Game {
      * @param force     force stops any previous musics and forces the new music to start instead
      * @param musicPath should be given in the format of: "fileName.wav" and always be inside folder "MusicFiles"
      */
-    static void playMusic(boolean force, String... musicPath) {
+    void playMusic(boolean force, String... musicPath) {
         if (force) {
             if (musicThread != null) {
                 musicThread.interrupt();
@@ -265,7 +265,7 @@ public class Game {
             Help.clearScreen();
             System.out.println("Start of turn: " + turnCounter + "\n");
 
-            map.printMap();
+            map.printMap(this);
             if (map.getRoom(hero).isExit()) {
                 System.out.println("\nYou have found the exit!\n" +
                         "You can exit the game and keep your high score");
@@ -273,7 +273,7 @@ public class Game {
 
             boolean inMenu = true;
             while (inMenu) {
-                Character menuChoice = MenuPrints.mainMenu();
+                Character menuChoice = MenuPrints.mainMenu(this);
                 inMenu = handleMenuChoice(menuChoice);
             }
             checkForFight();
@@ -350,11 +350,11 @@ public class Game {
         } else if (choice == FightShortcuts.getValue(FightShortcuts.FLEE)) {
             int roll = rand.nextInt(100);
             if (roll < 75) {
-                Room lastRoom = hero.getOldRoom();
-                hero.setRoomCurrentlyInside(lastRoom);
+                Room lastRoom = hero.getOldRoom(this.map);
+                hero.setRoomCurrentlyInside(this.map, lastRoom);
                 System.out.println(hero.getName() + " escaped with " + hero.getCurrentHealth() + " health.");
                 System.out.println("The map now looks like this");
-                map.printMap();
+                map.printMap(this);
                 Help.sleep(fightDelay);
                 return false;
             } else {
@@ -396,7 +396,7 @@ public class Game {
             // enter the sub menu loop
             inSubMenu = true;
         } else if (menuChoice == MainMenuShortcuts.getValue(MainMenuShortcuts.MAP)) {
-            map.printMap(); // simply print the map
+            map.printMap(this); // simply print the map
         } else if (menuChoice == MainMenuShortcuts.getValue(MainMenuShortcuts.FOOD)) {
             boolean hasItem = showInventory("FOOD");
             if (hasItem) {
@@ -444,7 +444,7 @@ public class Game {
      */
     private boolean handleMovement() {
         //Art.printMap();
-        map.printMap();
+        map.printMap(this);
         System.out.print(MapShortcuts.getAllMenuChoices());
         Character direction = Help.readChar();
         if (!MapShortcuts.getAllHashMapValues().contains(direction)) {
