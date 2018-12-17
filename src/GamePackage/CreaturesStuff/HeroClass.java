@@ -8,8 +8,10 @@ package GamePackage.CreaturesStuff;
 
 public enum HeroClass {
     WARRIOR, MAGE, ROGUE;
-    int hitChance;
+
 }
+
+
 
 
 

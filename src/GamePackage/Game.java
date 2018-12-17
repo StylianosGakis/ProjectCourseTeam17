@@ -141,8 +141,27 @@ public class Game implements Serializable {
     private void createHero() {
         // We start our hero on top left position.
         int initialStartingPosition = 0;
-        int startingHealth = 100;
-        int startingDamage = 10;
+        int startingHealth = 1;
+        int startingDamage = 1;
+        int agility = 1;//out of 9 and 9 is 100% success rate
+
+        if (hero.getHeroClass() == HeroClass.WARRIOR){
+            agility = 7;
+            startingHealth = 150;
+            startingDamage = 10;
+        }
+
+        if (hero.getHeroClass() == HeroClass.MAGE){
+            agility = 8;
+            startingHealth = 100;
+            startingDamage = 8;
+        }
+
+        if (hero.getHeroClass() == HeroClass.ROGUE){
+            agility = 9;
+            startingHealth = 80;
+            startingDamage = 15;
+        }
 
         System.out.print("\nWhat is your name?\n>> ");
         String name = in.nextLine();
@@ -166,7 +185,8 @@ public class Game implements Serializable {
                 initialStartingPosition,
                 startingHealth,
                 startingDamage,
-                heroClass);
+                heroClass,
+                agility);
         map.getRoom(hero).setExplored(true);
         map.getRoom(hero).getCreaturesList().add(hero);
     }
@@ -280,6 +300,8 @@ public class Game implements Serializable {
             checkForFight();
 
             //TODO rest of turn. Here monsters move etc. then the loop goes back and we are on next turn
+
+
             turnCounter++; // increase turn number at the end of loop before we go to the next turn
         }
     }
@@ -331,46 +353,53 @@ public class Game implements Serializable {
      */
     private boolean fightTurn(Monster monster, char choice) {
 
-        if (choice == FightShortcuts.getValue(FightShortcuts.ATTACK)) {
-            //todo random attack quotes
-            int heroDamage = hero.getDamage();
-            System.out.println(hero.getName() + " prepares for attack!");
-            Help.sleep(fightDelay);
-            System.out.println("Wohoo! " + hero.getName() + " throws a devastating blow dealing " + heroDamage + " damage");
-            Help.sleep(fightDelay);
-            monster.setCurrentHealth(monster.getCurrentHealth() - heroDamage);
-            System.out.println(monster.getName() + " health is now " + monster.getCurrentHealth() + "/" + monster.getMaxHealth());
-            boolean stopFight = checkDeath(monster);
-            if (stopFight) {
-                return false;
-            }
-        } else if (choice == FightShortcuts.getValue(FightShortcuts.INVENTORY)) {
-            // here we wasted a turn on drinking potion
-            System.out.println(hero.getName() + " at some food, " + monster.getName() + " takes advantage of " +
-                    "that and jumps to attack without giving any chance to react");
-        } else if (choice == FightShortcuts.getValue(FightShortcuts.FLEE)) {
-            int roll = rand.nextInt(100);
-            if (roll < 75) {
-                Room lastRoom = hero.getOldRoom(this.map);
-                hero.setRoomCurrentlyInside(this.map, lastRoom);
-                System.out.println(hero.getName() + " escaped with " + hero.getCurrentHealth() + " health.");
-                System.out.println("The map now looks like this");
-                map.printMap(this);
+            if (choice == FightShortcuts.getValue(FightShortcuts.ATTACK)) {
+                //todo random attack quotes
+                int heroDamage = hero.getDamage();
+                System.out.println(hero.getName() + " prepares for attack!");
                 Help.sleep(fightDelay);
-                return false;
-            } else {
-                System.out.println(hero.getName() + " tried to flee but failed, the monster takes advantage of " +
-                        "that mistake");
+                if (hero.getAgility() >= rand.nextInt(10)) {
+                    System.out.println("Wohoo! " + hero.getName() + " throws a devastating blow dealing " + heroDamage + " damage");
+                    Help.sleep(fightDelay);
+                    monster.setCurrentHealth(monster.getCurrentHealth() - heroDamage);
+                }else {
+                    System.out.println("Your attack missed!");
+                }
+                System.out.println(monster.getName() + " health is now " + monster.getCurrentHealth() + "/" + monster.getMaxHealth());
+                boolean stopFight = checkDeath(monster);
+                if (stopFight) {
+                    return false;
+                }
+            } else if (choice == FightShortcuts.getValue(FightShortcuts.INVENTORY)) {
+                // here we wasted a turn on drinking potion
+                System.out.println(hero.getName() + " at some food, " + monster.getName() + " takes advantage of " +
+                        "that and jumps to attack without giving any chance to react");
+            } else if (choice == FightShortcuts.getValue(FightShortcuts.FLEE)) {
+                if (hero.getAgility() >= rand.nextInt(10)) {
+                    Room lastRoom = hero.getOldRoom(this.map);
+                    hero.setRoomCurrentlyInside(this.map, lastRoom);
+                    System.out.println(hero.getName() + " escaped with " + hero.getCurrentHealth() + " health.");
+                    System.out.println("The map now looks like this");
+                    map.printMap(this);
+                    Help.sleep(fightDelay);
+                    return false;
+                } else {
+                    System.out.println(hero.getName() + " tried to flee but failed, the monster takes advantage of " +
+                            "that mistake");
+                }
             }
-        }
-        System.out.println("\nThe enemy prepares to attack!");
-        Help.sleep(fightDelay);
-        int monsterDamage = monster.getDamage();
-        System.out.println(monster.getName() + " hit " + hero.getName() + " for " + monsterDamage + " damage");
-        Help.sleep(fightDelay);
-        hero.setCurrentHealth(hero.getCurrentHealth() - monsterDamage);
-        System.out.println(hero.getName() + " health is now " + hero.getCurrentHealth() + "/" + hero.getMaxHealth());
-        checkDeath(monster); // here if hero dies the game will just end otherwise nothing happens.
+            System.out.println("\nThe enemy prepares to attack!");
+            Help.sleep(fightDelay);
+            int monsterDamage = monster.getDamage();
+            if (hero.getAgility() <= rand.nextInt(100)) {
+                System.out.println(monster.getName() + " hit " + hero.getName() + " for " + monsterDamage + " damage");
+                Help.sleep(fightDelay);
+                hero.setCurrentHealth(hero.getCurrentHealth() - monsterDamage);
+                System.out.println(hero.getName() + " health is now " + hero.getCurrentHealth() + "/" + hero.getMaxHealth());
+                checkDeath(monster); // here if hero dies the game will just end otherwise nothing happens.
+            }else {
+                System.out.println("You managed to dodge his attack!");
+            }
         return true;
     }
 

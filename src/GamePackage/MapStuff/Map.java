@@ -8,6 +8,7 @@ package GamePackage.MapStuff;
 
 import GamePackage.CreaturesStuff.Creature;
 import GamePackage.CreaturesStuff.Hero;
+import GamePackage.CreaturesStuff.Monster;
 import GamePackage.Game;
 import GamePackage.ShortcutPackage.MapShortcuts;
 
@@ -91,6 +92,7 @@ public class Map implements Serializable {
     // TODO don't let the a monster creature move if there is another monster there
     public boolean moveCreature(Creature creature, Character direction) {
         Door door = getDoor(getRoom(creature), direction);
+
         if (door == null) {
             if (creature instanceof Hero) {
                 System.out.println("There is no door in that direction!");
@@ -104,13 +106,51 @@ public class Map implements Serializable {
         } else { // Door exists, and is unlocked. Move there.
             Room currentRoom = getRoom(creature);
             if (direction == (MapShortcuts.getValue(MapShortcuts.LEFT))) {
-                creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex() - 1, currentRoom.getYIndex()));
+                if (creature instanceof Monster){
+                    if (!getRoom(creature.getXIndex() - 1,creature.getYIndex()).getCreaturesList().isEmpty()){
+                        creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex()));
+                    }else {
+                        creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex() - 1, currentRoom.getYIndex()));
+                    }
+                }else {
+                    creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex() - 1, currentRoom.getYIndex()));
+                }
+
             } else if (direction == MapShortcuts.getValue(MapShortcuts.UP)) {
-                creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() - 1));
+                if (creature instanceof Monster){
+                    if (!getRoom(creature.getXIndex(),creature.getYIndex() - 1).getCreaturesList().isEmpty()){
+                        creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex()));
+                    }else {
+                        creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() - 1));
+                    }
+                }else {
+                    creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() - 1));
+                }
+
             } else if (direction == MapShortcuts.getValue(MapShortcuts.RIGHT)) {
-                creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex() + 1, currentRoom.getYIndex()));
+                if (creature instanceof Monster){
+                    if (!getRoom(creature.getXIndex() + 1,creature.getYIndex()).getCreaturesList().isEmpty()){
+                        creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex()));
+                    }else {
+                        creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex() + 1, currentRoom.getYIndex()));
+                    }
+                }else {
+                    creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex() + 1, currentRoom.getYIndex()));
+                }
+
+
             } else if (direction == MapShortcuts.getValue(MapShortcuts.DOWN)) {
-                creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() + 1));
+                if (creature instanceof Monster){
+                    if (!getRoom(creature.getXIndex(),creature.getYIndex() + 1).getCreaturesList().isEmpty()){
+                        creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex()));
+                    }else {
+                        creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() + 1));
+                    }
+                }else {
+                    creature.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() + 1));
+                }
+
+
             }
             if (creature instanceof Hero) {
                 getRoom(creature).setExplored(true);

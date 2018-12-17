@@ -16,12 +16,14 @@ public class Hero extends Creature {
     private HeroClass heroClass;
     private ArrayList<Item> inventory;
     private int score;
+    int agility;
     // TODO add keys
 
     // Constructors
-    public Hero(String name, int xIndex, int yIndex, int maxHealth, int damage, HeroClass heroClass) {
+    public Hero(String name, int xIndex, int yIndex, int maxHealth, int damage, HeroClass heroClass, int agility) {
         super(name, xIndex, yIndex, maxHealth, damage);
         this.heroClass = heroClass;
+        this.agility = agility;
         inventory = new ArrayList<>();
         score = 0;
     }
@@ -48,5 +50,13 @@ public class Hero extends Creature {
 
     public void pickupLoot(Loot loot) {
         this.score += loot.getWorthInCoins();
+    }
+
+    public int getAgility() {
+        return agility;
+    }
+
+    public void setAgility(int agility) {
+        this.agility = agility;
     }
 }
