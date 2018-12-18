@@ -145,24 +145,6 @@ public class Game implements Serializable {
         int startingDamage = 1;
         int agility = 1;//out of 9 and 9 is 100% success rate
 
-        if (hero.getHeroClass() == HeroClass.WARRIOR){
-            agility = 7;
-            startingHealth = 150;
-            startingDamage = 10;
-        }
-
-        if (hero.getHeroClass() == HeroClass.MAGE){
-            agility = 8;
-            startingHealth = 100;
-            startingDamage = 8;
-        }
-
-        if (hero.getHeroClass() == HeroClass.ROGUE){
-            agility = 9;
-            startingHealth = 80;
-            startingDamage = 15;
-        }
-
         System.out.print("\nWhat is your name?\n>> ");
         String name = in.nextLine();
         System.out.println("Name saved: " + name);
@@ -180,6 +162,24 @@ public class Game implements Serializable {
             heroClass = HeroClass.ROGUE;
         }
         System.out.println("Class picked: " + heroClass);
+
+        if (heroClass == HeroClass.WARRIOR){
+            agility = 7;
+            startingHealth = 150;
+            startingDamage = 10;
+        }
+
+        if (heroClass == HeroClass.MAGE){
+            agility = 8;
+            startingHealth = 100;
+            startingDamage = 8;
+        }
+
+        if (heroClass == HeroClass.ROGUE){
+            agility = 9;
+            startingHealth = 80;
+            startingDamage = 15;
+        }
         hero = new Hero(name,
                 initialStartingPosition,
                 initialStartingPosition,
@@ -482,7 +482,7 @@ public class Game implements Serializable {
             System.out.println("Canceling movement");
             return false; // didn't use a turn.
         } else {
-            map.moveCreature(hero, direction);
+            map.moveHero(hero, direction);
             return true;
         }
     }
