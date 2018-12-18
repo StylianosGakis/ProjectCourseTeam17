@@ -14,6 +14,7 @@ import GamePackage.HelperClassPackage.Help;
 import GamePackage.ItemsStuff.Food;
 import GamePackage.ItemsStuff.Item;
 import GamePackage.ItemsStuff.Loot;
+import GamePackage.ItemsStuff.Weapon;
 import GamePackage.MapStuff.Map;
 import GamePackage.MapStuff.Room;
 import GamePackage.MenusPackage.MenuPrints;
@@ -145,24 +146,6 @@ public class Game implements Serializable {
         int startingDamage = 1;
         int agility = 1;//out of 9 and 9 is 100% success rate
 
-        if (hero.getHeroClass() == HeroClass.WARRIOR){
-            agility = 7;
-            startingHealth = 150;
-            startingDamage = 10;
-        }
-
-        if (hero.getHeroClass() == HeroClass.MAGE){
-            agility = 8;
-            startingHealth = 100;
-            startingDamage = 8;
-        }
-
-        if (hero.getHeroClass() == HeroClass.ROGUE){
-            agility = 9;
-            startingHealth = 80;
-            startingDamage = 15;
-        }
-
         System.out.print("\nWhat is your name?\n>> ");
         String name = in.nextLine();
         System.out.println("Name saved: " + name);
@@ -179,6 +162,25 @@ public class Game implements Serializable {
         } else if (classChoice == '3') {
             heroClass = HeroClass.ROGUE;
         }
+
+        if (heroClass == HeroClass.WARRIOR){
+            agility = 7;
+            startingHealth = 150;
+            startingDamage = 10;
+        }
+
+        if (heroClass == HeroClass.MAGE){
+            agility = 8;
+            startingHealth = 100;
+            startingDamage = 8;
+        }
+
+        if (heroClass == HeroClass.ROGUE){
+            agility = 9;
+            startingHealth = 80;
+            startingDamage = 15;
+        }
+
         System.out.println("Class picked: " + heroClass);
         hero = new Hero(name,
                 initialStartingPosition,
@@ -243,6 +245,7 @@ public class Game implements Serializable {
         int foodMinHealth = (int) (hero.getMaxHealth() * 0.2);
         int foodMaxHealth = (int) (hero.getMaxHealth() * 0.4);
         foodMaxHealth -= foodMinHealth;
+        int[] weaponDamage = {10,7,5};
 
         //Loot names
         ArrayList<String> LootName = new ArrayList<>();
@@ -254,6 +257,11 @@ public class Game implements Serializable {
         FoodName.add("Fish");
         FoodName.add("Bread");
         FoodName.add("Cheese");
+        ArrayList<String>NewWeapon = new ArrayList<>();
+        NewWeapon.add("Sword of Raemarr");
+        NewWeapon.add("Bow of Henya");
+        NewWeapon.add("Dagger of Elize");
+        //TODO place the items random on map
         System.out.println("\nChose amount of loot in map \n1. Low Amount\n2. Medium Amount\n3. High Amount");
         Character choice = Help.readCharUntilOneMatch('1', '2', '3');
         int numChoice = Character.getNumericValue(choice);
@@ -263,7 +271,7 @@ public class Game implements Serializable {
         int numberOfItemsToBeMade = map.getMapSize() * numChoice;
         for (int i = 0; i < numberOfItemsToBeMade; i++) {
             Room randomRoomL = map.getRandomRoom(); // gets a random room from our map
-            // adds to the item arraylist of that room
+            // adds to the item ArrayList of that room
             randomRoomL.getItemsList()
                     .add(new Loot(LootName.get(rand.nextInt(LootName.size())),
                             rand.nextInt(lootMinValue) + lootMaxValue));
@@ -272,6 +280,11 @@ public class Game implements Serializable {
                     .add(new Food(FoodName.get(rand.nextInt(FoodName.size())),
                             rand.nextInt(foodMinHealth) + foodMaxHealth));
 
+        }
+
+        for(int i=0; i<3; i++) {
+            Room room = map.getRandomRoom();
+            room.getItemsList().add(new Weapon(NewWeapon.get(i),weaponDamage[i]));
         }
     }
 
@@ -607,6 +620,18 @@ public class Game implements Serializable {
                         hero.pickupLoot((Loot) itemPickedUp);
                         System.out.println(itemPickedUp + "has added " + ((Loot) itemPickedUp).getWorthInCoins() +
                                 " value to your high score. Your current score is now: " + hero.getScore());
+                    } else if (itemPickedUp instanceof Weapon){
+                        if(hero.getWeapon()  == null){
+                            hero.setWeapon((Weapon) itemPickedUp);
+                            System.out.println("You picked up " + itemPickedUp.getName() + ". Your enemies will feel your fury!");
+                        }else{
+                            if(hero.getWeapon().getDamage() < ((Weapon) itemPickedUp).getDamage()){
+                                hero.setWeapon((Weapon) itemPickedUp);
+                                System.out.println("Greater damage means greater strength. You found a better weapon to help you in your quest!");
+                            }else{
+                                System.out.println("You decide the new weapon is not worthy and you throw it into abyss.");
+                            }
+                        }
                     } else {
                         hero.getInventory().add(itemPickedUp);
                         System.out.println(itemPickedUp + " has been picked up.");
