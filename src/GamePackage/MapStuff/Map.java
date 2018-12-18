@@ -17,7 +17,7 @@ import java.security.SecureRandom;
 
 public class Map implements Serializable {
     private int mapSize;
-    private Room[][] mapArray;
+    public Room[][] mapArray;
     private Door[][] verticalDoorArray;
     private Door[][] horizontalDoorArray;
     SecureRandom rand = new SecureRandom();
@@ -142,19 +142,19 @@ public class Map implements Serializable {
                 }else {
                     monster.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex() - 1, currentRoom.getYIndex()));
             }
-        } else if (direction == (MapShortcuts.getValue(MapShortcuts.LEFT))) {
+        } else if (direction == (MapShortcuts.getValue(MapShortcuts.UP))) {
                 if (!getRoom(monster.getXIndex(),monster.getYIndex() - 1).getCreaturesList().isEmpty()){
                     return false;
                 }else {
                     monster.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex(), currentRoom.getYIndex() - 1));
                 }
-        } else if (direction == (MapShortcuts.getValue(MapShortcuts.LEFT))) {
+        } else if (direction == (MapShortcuts.getValue(MapShortcuts.RIGHT))) {
             if (!getRoom(monster.getXIndex() + 1,monster.getYIndex()).getCreaturesList().isEmpty()){
                 return false;
             }else {
                 monster.setRoomCurrentlyInside(this, getRoom(currentRoom.getXIndex() + 1, currentRoom.getYIndex()));
             }
-        } else if (direction == (MapShortcuts.getValue(MapShortcuts.LEFT))) {
+        } else if (direction == (MapShortcuts.getValue(MapShortcuts.DOWN))) {
             if (!getRoom(monster.getXIndex(),monster.getYIndex() + 1).getCreaturesList().isEmpty()){
                 return false;
             }else {
@@ -199,7 +199,9 @@ public class Map implements Serializable {
             return door;
         } catch (ArrayIndexOutOfBoundsException outOfBounds) {
             // Printing that we are out of bounds
-            System.out.println("You knock but to no avail, all you see is a wall of stones blocking your path");
+
+            //TODO Print this if a hero is trying to move
+            //System.out.println("You knock but to no avail, all you see is a wall of stones blocking your path");
             return null;
         }
     }

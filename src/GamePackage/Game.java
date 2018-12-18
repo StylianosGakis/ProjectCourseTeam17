@@ -299,8 +299,18 @@ public class Game implements Serializable {
             }
             checkForFight();
 
-            //TODO rest of turn. Here monsters move etc. then the loop goes back and we are on next turn
-
+            // Loop through all the Rooms and make all Monsters move
+            for (Room[] roomRow : map.mapArray){
+                for (Room room : roomRow) {
+                    ArrayList<Creature> creatureList = room.getCreaturesList();
+                    if (!creatureList.isEmpty()){
+                        Creature creature = creatureList.get(0);
+                        if (creature instanceof Monster){
+                            map.moveMonster((Monster) creature);
+                        }
+                    }
+                }
+            }
 
             turnCounter++; // increase turn number at the end of loop before we go to the next turn
         }
