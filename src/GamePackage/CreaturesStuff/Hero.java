@@ -8,6 +8,7 @@ package GamePackage.CreaturesStuff;
 
 import GamePackage.ItemsStuff.Item;
 import GamePackage.ItemsStuff.Loot;
+import GamePackage.ItemsStuff.Weapon;
 
 import java.util.ArrayList;
 
@@ -15,6 +16,7 @@ public class Hero extends Creature {
     // Field variables
     private HeroClass heroClass;
     private ArrayList<Item> inventory;
+    private Weapon weapon;
     private int score;
     int agility;
     // TODO add keys
@@ -30,6 +32,14 @@ public class Hero extends Creature {
 
 
     // Methods
+
+    public int getDamage(){
+        int damage = super.getDamage();
+        if (this.weapon != null){
+            damage += weapon.getDamage();
+        }
+        return damage;
+    }
 
     // Getters and setters
     public HeroClass getHeroClass() {
@@ -58,5 +68,13 @@ public class Hero extends Creature {
 
     public void setAgility(int agility) {
         this.agility = agility;
+    }
+
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
     }
 }
