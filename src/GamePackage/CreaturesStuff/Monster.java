@@ -25,6 +25,7 @@ public class Monster extends Creature {
     public ArrayList<Loot> getLootArray() {
         return lootArray;
     }
+
     public void setLootArray(ArrayList<Loot> lootArray) {
         this.lootArray = lootArray;
     }

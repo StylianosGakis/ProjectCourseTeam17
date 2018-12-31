@@ -65,6 +65,7 @@ public class Door implements Serializable {
     private DoorColor doorColor;
 
     // Constructors
+
     /**
      * Constructor in case it is not locked
      */
@@ -75,6 +76,7 @@ public class Door implements Serializable {
             this.doorColor = DoorColor.GRAY;
         }
     }
+
     /**
      * Constructor in case it is locked, therefore need a color for the door as well
      */
@@ -92,12 +94,15 @@ public class Door implements Serializable {
     public boolean isLocked() {
         return locked;
     }
+
     public void setLocked(boolean locked) {
         this.locked = locked;
     }
+
     public DoorColor getDoorColor() {
         return doorColor;
     }
+
     public void setDoorColor(DoorColor doorColor) {
         this.doorColor = doorColor;
     }

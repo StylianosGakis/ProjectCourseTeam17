@@ -20,6 +20,7 @@ package ArtPackage;
 public final class Art {
     private Art() {
     }
+
     public static void printMap() {
         System.out.println("\n" +
                 "88,dPYba,,adPYba,  ,adPPYYba, 8b,dPPYba,\n" +

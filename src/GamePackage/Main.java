@@ -14,7 +14,7 @@ public class Main {
         Character choice = printMainMenu();
         if (choice == '1') {
             game.startGame();
-        } else if (choice == '2'){
+        } else if (choice == '2') {
             //TODO make a menu from a list of loaded games to show and pick from, also show some relevant information
             //  from each loaded game
             Game loadedGame = Help.loadGame();

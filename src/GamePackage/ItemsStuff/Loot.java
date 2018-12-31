@@ -20,9 +20,11 @@ public class Loot extends Item {
     public int getWorthInCoins() {
         return worthInCoins;
     }
+
     public void setWorthInCoins(int worthInCoins) {
         this.worthInCoins = worthInCoins;
     }
+
     @Override
     public String toString() {
         return super.toString() +

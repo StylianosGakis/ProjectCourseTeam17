@@ -23,27 +23,24 @@ import GamePackage.ShortcutPackage.FightShortcuts;
 import GamePackage.ShortcutPackage.MainMenuShortcuts;
 import GamePackage.ShortcutPackage.MapShortcuts;
 import GamePackage.ShortcutPackage.SubMenuShortcuts;
+import HighScorePackage.HighScore;
 
 import java.io.Serializable;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 public class Game implements Serializable {
 
-    public Hero hero;
-    public Map map;
     private static volatile Thread musicThread = new Thread();
     private static Scanner in = new Scanner(System.in);
-
+    private static SecureRandom rand = new SecureRandom();
     // Field variables
     private final int fightDelay = 100;
+    public Hero hero;
+    public Map map;
     // Matches currently Y,y,Yes,yes,Yep,yep,Yea,yea,Yeah,yeah,Yeap,yeap
     //if curious: https://regex101.com/r/AAw9Ry/1v
     private String yesPattern = "^[Yy]{1}((es){0,1}|(ep){0,1}|(ea){0,1}[hp]{0,1})$"; //todo a No Pattern
-    private static SecureRandom rand = new SecureRandom();
     private int turnCounter = 1;
 
     // Setup stuff
@@ -79,12 +76,12 @@ public class Game implements Serializable {
         }
         SecureRandom rand = new SecureRandom();
         if (!musicThread.isAlive() || musicThread.isInterrupted() || force) {
-            int numberOfSongs = musicPath.length;
-            int randomChoice = rand.nextInt(numberOfSongs); // pick a random song
+            int randomChoice = rand.nextInt(musicPath.length); // pick a random song
             musicThread = new Thread(new MusicPlayer("MusicFiles/" + musicPath[randomChoice]));
             musicThread.start();
         }
     }
+
     private boolean checkDeath(Creature creature) {
         if (hero.getCurrentHealth() <= 0) {
             System.out.println("\nAlas! " + hero.getName() + " died! The monster wins :( (╯°□°）╯︵ ┻━┻");
@@ -163,19 +160,19 @@ public class Game implements Serializable {
             heroClass = HeroClass.ROGUE;
         }
 
-        if (heroClass == HeroClass.WARRIOR){
+        if (heroClass == HeroClass.WARRIOR) {
             agility = 7;
             startingHealth = 150;
             startingDamage = 10;
         }
 
-        if (heroClass == HeroClass.MAGE){
+        if (heroClass == HeroClass.MAGE) {
             agility = 8;
             startingHealth = 100;
             startingDamage = 8;
         }
 
-        if (heroClass == HeroClass.ROGUE){
+        if (heroClass == HeroClass.ROGUE) {
             agility = 9;
             startingHealth = 80;
             startingDamage = 15;
@@ -183,19 +180,19 @@ public class Game implements Serializable {
 
         System.out.println("Class picked: " + heroClass);
 
-        if (heroClass == HeroClass.WARRIOR){
+        if (heroClass == HeroClass.WARRIOR) {
             agility = 7;
             startingHealth = 150;
             startingDamage = 10;
         }
 
-        if (heroClass == HeroClass.MAGE){
+        if (heroClass == HeroClass.MAGE) {
             agility = 8;
             startingHealth = 100;
             startingDamage = 8;
         }
 
-        if (heroClass == HeroClass.ROGUE){
+        if (heroClass == HeroClass.ROGUE) {
             agility = 9;
             startingHealth = 80;
             startingDamage = 15;
@@ -212,6 +209,7 @@ public class Game implements Serializable {
     }
 
     // Other methods
+
     /**
      * Will be called inside setupGame to place monsters in the correct positions
      */
@@ -263,7 +261,7 @@ public class Game implements Serializable {
         int foodMinHealth = (int) (hero.getMaxHealth() * 0.2);
         int foodMaxHealth = (int) (hero.getMaxHealth() * 0.4);
         foodMaxHealth -= foodMinHealth;
-        int[] weaponDamage = {10,7,5};
+        int[] weaponDamage = {10, 7, 5};
 
         //Loot names
         ArrayList<String> LootName = new ArrayList<>();
@@ -275,7 +273,7 @@ public class Game implements Serializable {
         FoodName.add("Fish");
         FoodName.add("Bread");
         FoodName.add("Cheese");
-        ArrayList<String>NewWeapon = new ArrayList<>();
+        ArrayList<String> NewWeapon = new ArrayList<>();
         NewWeapon.add("Sword of Raemarr");
         NewWeapon.add("Bow of Henya");
         NewWeapon.add("Dagger of Elize");
@@ -300,9 +298,9 @@ public class Game implements Serializable {
 
         }
 
-        for(int i=0; i<3; i++) {
+        for (int i = 0; i < 3; i++) {
             Room room = map.getRandomRoom();
-            room.getItemsList().add(new Weapon(NewWeapon.get(i),weaponDamage[i]));
+            room.getItemsList().add(new Weapon(NewWeapon.get(i), weaponDamage[i]));
         }
     }
 
@@ -317,10 +315,19 @@ public class Game implements Serializable {
             Help.clearScreen();
             System.out.println("Start of turn: " + turnCounter + "\n");
 
+            hero.printCurrentStats(); // Prints some relevant information at the start of the turn.
+
             map.printMap(this);
             if (map.getRoom(hero).isExit()) {
                 System.out.println("\nYou have found the exit!\n" +
                         "You can exit the game and keep your high score");
+                HighScore highScore = Help.getHighScore();
+                if (highScore != null) {
+                    System.out.println("Current score: " + hero.getScore());
+                    System.out.println("Best score:    " + highScore.getScore());
+                } else {
+                    System.out.println("There is no current high score! You can claim it.");
+                }
             }
 
             boolean inMenu = true;
@@ -331,13 +338,16 @@ public class Game implements Serializable {
             checkForFight();
 
             // Loop through all the Rooms and make all Monsters move
-            for (Room[] roomRow : map.mapArray){
+            for (Room[] roomRow : map.mapArray) {
                 for (Room room : roomRow) {
                     ArrayList<Creature> creatureList = room.getCreaturesList();
-                    if (!creatureList.isEmpty()){
+                    if (!creatureList.isEmpty()) {
                         Creature creature = creatureList.get(0);
-                        if (creature instanceof Monster){
-                            map.moveMonster((Monster) creature);
+                        if (creature instanceof Monster) {
+                            double chance = rand.nextDouble();
+                            if (chance > 0.75) { // 75% chance to move
+                                map.moveMonster((Monster) creature);
+                            }
                         }
                     }
                 }
@@ -369,6 +379,12 @@ public class Game implements Serializable {
         System.out.println("\nAlas! " + hero.getName() + " has encountered a bloodthirsty enemy. " +
                 "Now it is time to prove your worth and defeat it!");//todo random encounter quotes
 
+        // Printing health information once before the fight continues
+        System.out.println(hero.getName() + ":");
+        hero.printCurrentHealth();
+        System.out.println(monster.getName() + ":");
+        System.out.println("Current HP/Max HP - " + monster.getCurrentHealth() + "/" + monster.getMaxHealth());
+
         boolean inLoop = true;
         while (inLoop) {
             System.out.print(FightShortcuts.getAllMenuChoices());
@@ -393,54 +409,53 @@ public class Game implements Serializable {
      * @return false if the fight is over
      */
     private boolean fightTurn(Monster monster, char choice) {
-
-            if (choice == FightShortcuts.getValue(FightShortcuts.ATTACK)) {
-                //todo random attack quotes
-                int heroDamage = hero.getDamage();
-                System.out.println(hero.getName() + " prepares for attack!");
-                Help.sleep(fightDelay);
-                if (hero.getAgility() >= rand.nextInt(10)) {
-                    System.out.println("Wohoo! " + hero.getName() + " throws a devastating blow dealing " + heroDamage + " damage");
-                    Help.sleep(fightDelay);
-                    monster.setCurrentHealth(monster.getCurrentHealth() - heroDamage);
-                }else {
-                    System.out.println("Your attack missed!");
-                }
-                System.out.println(monster.getName() + " health is now " + monster.getCurrentHealth() + "/" + monster.getMaxHealth());
-                boolean stopFight = checkDeath(monster);
-                if (stopFight) {
-                    return false;
-                }
-            } else if (choice == FightShortcuts.getValue(FightShortcuts.INVENTORY)) {
-                // here we wasted a turn on drinking potion
-                System.out.println(hero.getName() + " at some food, " + monster.getName() + " takes advantage of " +
-                        "that and jumps to attack without giving any chance to react");
-            } else if (choice == FightShortcuts.getValue(FightShortcuts.FLEE)) {
-                if (hero.getAgility() >= rand.nextInt(10)) {
-                    Room lastRoom = hero.getOldRoom(this.map);
-                    hero.setRoomCurrentlyInside(this.map, lastRoom);
-                    System.out.println(hero.getName() + " escaped with " + hero.getCurrentHealth() + " health.");
-                    System.out.println("The map now looks like this");
-                    map.printMap(this);
-                    Help.sleep(fightDelay);
-                    return false;
-                } else {
-                    System.out.println(hero.getName() + " tried to flee but failed, the monster takes advantage of " +
-                            "that mistake");
-                }
-            }
-            System.out.println("\nThe enemy prepares to attack!");
+        if (choice == FightShortcuts.getValue(FightShortcuts.ATTACK)) {
+            //todo random attack quotes
+            int heroDamage = hero.getDamage();
+            System.out.println(hero.getName() + " prepares for attack!");
             Help.sleep(fightDelay);
-            int monsterDamage = monster.getDamage();
-            if (hero.getAgility() <= rand.nextInt(100)) {
-                System.out.println(monster.getName() + " hit " + hero.getName() + " for " + monsterDamage + " damage");
+            if (hero.getAgility() >= rand.nextInt(10)) {
+                System.out.println("Wohoo! " + hero.getName() + " throws a devastating blow dealing " + heroDamage + " damage");
                 Help.sleep(fightDelay);
-                hero.setCurrentHealth(hero.getCurrentHealth() - monsterDamage);
-                System.out.println(hero.getName() + " health is now " + hero.getCurrentHealth() + "/" + hero.getMaxHealth());
-                checkDeath(monster); // here if hero dies the game will just end otherwise nothing happens.
-            }else {
-                System.out.println("You managed to dodge his attack!");
+                monster.setCurrentHealth(monster.getCurrentHealth() - heroDamage);
+            } else {
+                System.out.println("Your attack missed!");
             }
+            System.out.println(monster.getName() + " health is now " + monster.getCurrentHealth() + "/" + monster.getMaxHealth());
+            boolean stopFight = checkDeath(monster);
+            if (stopFight) {
+                return false;
+            }
+        } else if (choice == FightShortcuts.getValue(FightShortcuts.INVENTORY)) {
+            // here we wasted a turn on drinking potion
+            System.out.println(hero.getName() + " ate some food, " + monster.getName() + " takes advantage of " +
+                    "that and jumps to attack without giving any chance to react");
+        } else if (choice == FightShortcuts.getValue(FightShortcuts.FLEE)) {
+            if (hero.getAgility() >= rand.nextInt(10)) {
+                Room lastRoom = hero.getOldRoom(this.map);
+                hero.setRoomCurrentlyInside(this.map, lastRoom);
+                System.out.println(hero.getName() + " escaped with " + hero.getCurrentHealth() + " health.");
+                System.out.println("The map now looks like this");
+                map.printMap(this);
+                Help.sleep(fightDelay);
+                return false;
+            } else {
+                System.out.println(hero.getName() + " tried to flee but failed, the monster takes advantage of " +
+                        "that mistake");
+            }
+        }
+        System.out.println("\nThe enemy prepares to attack!");
+        Help.sleep(fightDelay);
+        int monsterDamage = monster.getDamage();
+        if (hero.getAgility() <= rand.nextInt(100)) {
+            System.out.println(monster.getName() + " hit " + hero.getName() + " for " + monsterDamage + " damage");
+            Help.sleep(fightDelay);
+            hero.setCurrentHealth(hero.getCurrentHealth() - monsterDamage);
+            hero.printCurrentHealth();
+            checkDeath(monster); // here if hero dies the game will just end otherwise nothing happens.
+        } else {
+            System.out.println("You managed to dodge his attack!");
+        }
         return true;
     }
 
@@ -493,7 +508,7 @@ public class Game implements Serializable {
      */
     private boolean handleSubMenu(int subChoice) {
         if (subChoice == SubMenuShortcuts.getValue(SubMenuShortcuts.INSTRUCTIONS)) { // show game instructions
-            //TODO Show instructions on the game
+            Help.printGameInstructions();
         } else if (subChoice == SubMenuShortcuts.getValue(SubMenuShortcuts.SAVE_GAME)) { // save game
             Help.saveGame(this);
         } else if (subChoice == SubMenuShortcuts.getValue(SubMenuShortcuts.SHOW_KEY_BINDINGS)) { // show keyboard commands
@@ -589,7 +604,7 @@ public class Game implements Serializable {
         boolean hasItems = showInventory("FOOD");
 
         if (hasItems) {
-            System.out.println("Current HP/Max HP - " + hero.getCurrentHealth() + "/" + hero.getMaxHealth());
+            hero.printCurrentHealth();
             System.out.print("Enter the number of the food to consume or 0 to cancel\n>> ");
         }
         while (hasItems) {
@@ -648,15 +663,15 @@ public class Game implements Serializable {
                         hero.pickupLoot((Loot) itemPickedUp);
                         System.out.println(itemPickedUp + "has added " + ((Loot) itemPickedUp).getWorthInCoins() +
                                 " value to your high score. Your current score is now: " + hero.getScore());
-                    } else if (itemPickedUp instanceof Weapon){
-                        if(hero.getWeapon()  == null){
+                    } else if (itemPickedUp instanceof Weapon) {
+                        if (hero.getWeapon() == null) {
                             hero.setWeapon((Weapon) itemPickedUp);
                             System.out.println("You picked up " + itemPickedUp.getName() + ". Your enemies will feel your fury!");
-                        }else{
-                            if(hero.getWeapon().getDamage() < ((Weapon) itemPickedUp).getDamage()){
+                        } else {
+                            if (hero.getWeapon().getDamage() < ((Weapon) itemPickedUp).getDamage()) {
                                 hero.setWeapon((Weapon) itemPickedUp);
                                 System.out.println("Greater damage means greater strength. You found a better weapon to help you in your quest!");
-                            }else{
+                            } else {
                                 System.out.println("You decide the new weapon is not worthy and you throw it into abyss.");
                             }
                         }
@@ -692,6 +707,19 @@ public class Game implements Serializable {
             System.out.print("Your high score was ");
         }
         System.out.println(hero.getScore());
+        if (heroHealth > 0) {
+            HighScore highScore = new HighScore(hero.getName(), hero.getScore(), new Date());
+            Help.saveHighScore(highScore);
+            System.out.println("Your high score was saved");
+            Help.sleep(1000);
+            System.out.println("The current high score is held by:");
+            HighScore currentHighScore = Help.getHighScore();
+            int nameLength = currentHighScore.getName().length();
+            System.out.println(
+                    String.format("%-" + nameLength + "s %5s  %s", "Name", "Score", "Date")
+            );
+            System.out.println(currentHighScore);
+        }
         System.out.print("Press anything to continue ");
         in.nextLine();
         musicThread.interrupt();
