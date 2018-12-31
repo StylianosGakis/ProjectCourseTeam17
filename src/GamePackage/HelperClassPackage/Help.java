@@ -11,6 +11,7 @@ import GamePackage.ShortcutPackage.FightShortcuts;
 import GamePackage.ShortcutPackage.MainMenuShortcuts;
 import GamePackage.ShortcutPackage.MapShortcuts;
 import GamePackage.ShortcutPackage.SubMenuShortcuts;
+import HighScorePackage.HighScore;
 
 import java.io.*;
 import java.util.Arrays;
@@ -78,6 +79,37 @@ public final class Help {
         return choice;
     }
 
+    public static void saveHighScore(HighScore highScore) {
+        HighScore oldHighScore = Help.getHighScore();
+        boolean doSave = true;
+        if (oldHighScore != null) {
+            if (oldHighScore.getScore() > highScore.getScore()) { // if the old score was better.
+                doSave = false; // don't save since the best one is already saved.
+            }
+        }
+        if (doSave) {
+            File file = new File("src/HighScorePackage/HighScore.txt");
+            try (ObjectOutputStream oOut = new ObjectOutputStream(new FileOutputStream(file))) {
+                oOut.writeObject(highScore);
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Save game failed");
+            }
+        }
+    }
+
+    public static HighScore getHighScore() {
+        File file = new File("src/HighScorePackage/HighScore.txt");
+        HighScore highScore = null;
+        try (ObjectInputStream oIn = new ObjectInputStream(new FileInputStream(file))) {
+            highScore = (HighScore) oIn.readObject();
+        } catch (Exception e) {
+            //e.printStackTrace();
+            return null;
+        }
+        return highScore;
+    }
+
     public static void saveGame(Game game) {
         File file = new File("src/SaveGames/Save_1.txt");
         try (ObjectOutputStream oOut = new ObjectOutputStream(new FileOutputStream(file))) {
@@ -97,6 +129,22 @@ public final class Help {
             e.printStackTrace();
         }
         return game;
+    }
+
+    /**
+     * Prints game instructions for the player to read
+     */
+    public static void printGameInstructions() {
+        clearScreen();
+        System.out.println(
+                "The goal of the game is to reach the room that contains the exit.\n" +
+                        "Once there, you have a choice to exit the game or not keeping your high score.\n" +
+                        "You are allowed to move around the map to fight more monsters and acquire more loot.\n" +
+                        "The menu options are descriptive about what your options are while in game.\n" +
+                        "There is also a sub-menu that includes the rest of the moves available to you.\n" +
+                        "\nPress any key to continue"
+        );
+        in.nextLine();
     }
 
     /**

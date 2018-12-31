@@ -14,6 +14,7 @@ public class Room implements Serializable {
     private boolean isExit = false;
     private int xIndex;
     private int yIndex;
+
     // Constructors
     public Room(int xIndex, int yIndex) {
         this.xIndex = xIndex;
@@ -26,39 +27,51 @@ public class Room implements Serializable {
     public ArrayList<Item> getItemsList() {
         return itemsList;
     }
+
     public void setItemsList(ArrayList<Item> itemsList) {
         this.itemsList = itemsList;
     }
+
     public ArrayList<Creature> getCreaturesList() {
         return creaturesList;
     }
+
     public void setCreaturesList(ArrayList<Creature> creaturesList) {
         this.creaturesList = creaturesList;
     }
+
     public int getXIndex() {
         return xIndex;
     }
+
     public void setXIndex(int xIndex) {
         this.xIndex = xIndex;
     }
+
     public int getYIndex() {
         return yIndex;
     }
+
     public void setYIndex(int yIndex) {
         this.yIndex = yIndex;
     }
+
     public boolean isExplored() {
         return isExplored;
     }
+
     public void setExplored(boolean explored) {
         isExplored = explored;
     }
+
     public boolean isExit() {
         return isExit;
     }
+
     public void setExit(boolean exit) {
         isExit = exit;
     }
+
     @Override
     public String toString() {
         return "Room{" +

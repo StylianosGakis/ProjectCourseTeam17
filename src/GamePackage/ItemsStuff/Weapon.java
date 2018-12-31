@@ -1,6 +1,6 @@
 package GamePackage.ItemsStuff;
 
-public class Weapon extends Item{
+public class Weapon extends Item {
     private int damage;
 
     // Constructors

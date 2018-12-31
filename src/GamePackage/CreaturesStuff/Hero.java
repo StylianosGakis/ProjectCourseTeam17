@@ -33,12 +33,30 @@ public class Hero extends Creature {
 
     // Methods
 
-    public int getDamage(){
+    public int getDamage() {
         int damage = super.getDamage();
-        if (this.weapon != null){
+        if (this.weapon != null) {
             damage += weapon.getDamage();
         }
         return damage;
+    }
+
+    public void printCurrentStats() {
+        System.out.println("Current score: " + score);
+        if (weapon != null) {
+            System.out.println("You are wielding the " + weapon.getName());
+        }
+        if (inventory.size() == 0) {
+            System.out.println("Your inventory is empty!");
+        } else {
+            System.out.println("You have " + inventory.size() + " items in your inventory.");
+        }
+        this.printCurrentHealth();
+        System.out.println();
+    }
+
+    public void printCurrentHealth() {
+        System.out.println("Current HP/Max HP - " + this.getCurrentHealth() + "/" + this.getMaxHealth());
     }
 
     // Getters and setters

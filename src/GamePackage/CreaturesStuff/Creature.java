@@ -6,7 +6,6 @@
 
 package GamePackage.CreaturesStuff;
 
-import GamePackage.Game;
 import GamePackage.MapStuff.Map;
 import GamePackage.MapStuff.Room;
 
@@ -41,47 +40,57 @@ public abstract class Creature implements Serializable {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }
+
     public int getXIndex() {
         return xIndex;
     }
+
     public void setXIndex(int xIndex) {
         this.xIndex = xIndex;
     }
+
     public int getYIndex() {
         return yIndex;
     }
+
     public void setYIndex(int yIndex) {
         this.yIndex = yIndex;
     }
+
     public int getMaxHealth() {
         return maxHealth;
     }
+
     public void setMaxHealth(int maxHealth) {
         this.maxHealth = maxHealth;
     }
+
     public int getCurrentHealth() {
         return currentHealth;
     }
+
     public void setCurrentHealth(int currentHealth) {
         this.currentHealth = currentHealth;
         if (this.currentHealth < 0) {
             this.currentHealth = 0;
         }
     }
+
     public int getDamage() {
         SecureRandom rand = new SecureRandom();
 
         double doubleDamage = (double) this.damage;
-        //todo doubleDamage += this.weapon.getDamage();
         double randomValue = rand.nextDouble() / 2; // gets a number from 0 to 0.50
         randomValue -= 0.25; // to put it from -0.25 to +0.25
         doubleDamage *= (1 + randomValue); // times: 0.75 to 1.25
 
         return (int) doubleDamage; // box to int, might lose some values but it's fine
     }
+
     public void setDamage(int damage) {
         this.damage = damage;
     }
